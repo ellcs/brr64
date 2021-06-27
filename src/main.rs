@@ -1,9 +1,19 @@
+use std::io;
+
 const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-
 fn main() {
-    println!("Hello, world!");
+  let mut input = String::new();
+  match io::stdin().read_line(&mut input) {
+    Ok(n) => {
+      println!("{} bytes read", n);
+      println!("{}", input);
+    }
+    Err(error) => println!("error: {}", error),
+  }
 }
+
+
 
 fn every_three_chars<F: FnMut(&[u8])>(s: &str, steps: u8, mut f: F) -> () {
     s.bytes().
@@ -25,22 +35,50 @@ fn base64_three_chars(chars: &[u8; 3], result: &mut [u8; 4]) {
     result[3] = BASE64_CHARS[(group24 & 0x3f) as usize];
 }
 
+fn fooadd(a: &u8, b: &u8) -> u8 {
+   a + b 
+}
+
 
 #[test]
-fn test_slice_of_array_mutable() {
-    let _bytez: &[u8; 8] = b"asdfasdf";
-    let _exp_bytez: &[u8; 8] = b"asfdasdf";
+#[should_panic]
+fn test_overflows() {
+    let a: u8 = 255;
+    let b: u8 = 1;
+    fooadd(&a, &b);
+}
 
+
+#[test]
+fn test_chunks() {
+    let s: &str = "asdf asdf";
+    s.bytes().
+        collect::<Vec<u8>>().
+        chunks(2 as usize).
+        for_each(|c| {
+            let _a: u8 = c.iter().sum();
+        })
+}
+
+
+#[test]
+fn test_rev_str() {
+    let s: &str = "asdf";
+    let r: String = s.chars().rev().collect();
+    assert!(&r == "fdsa");
 }
 
 
 #[test]
 fn test_byte_mapping() {
-    "asdf asdf asdf".chars().
-        collect::<Vec<char>>().
-        for_each(|b| {
-           ((b as u8) + 1) as char
-        });
+    let s: &str = "abcd";
+    let inc: String = s.bytes().
+        collect::<Vec<u8>>().
+        iter().
+        map(|b| {
+            (b + 1) as char
+        }).collect();
+    assert!(&inc == "bcde");
 }
 
 #[test]
