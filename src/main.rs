@@ -11,7 +11,7 @@ fn main() {
 		  Ok(n) => {
             // rm -f \n
             input.pop();
-            base64_encode(&mut input.clone());
+            base64_encode(input.clone());
             input.clear();
 		  }
 		  Err(error) => println!("error: {}", error),
@@ -20,7 +20,7 @@ fn main() {
 }
 
 
-fn base64_encode(input: &mut String) -> String {
+fn base64_encode(input: String) -> String {
     let mut output = input.clone();
     let mut out: Vec<u8> = vec![0, 0, 0, 0];
 
@@ -30,17 +30,18 @@ fn base64_encode(input: &mut String) -> String {
         i = i + 1; 
     }
 
-    output.bytes().
+    output = output.bytes().
         collect::<Vec<u8>>().
         chunks(3 as usize).
-        for_each(|three_chars: &[u8]| {
+        map(|three_chars: &[u8]| {
             base64_three_chars(&three_chars, &mut out);
-            print!("{}", out.iter().map(|&x| x as char).collect::<String>());
-            io::stdout().flush().unwrap();
-        });
-    for x in 0..i {
-        
-    }
+            out.iter().map(|&x| x as char).collect::<String>()
+        }).collect::<Vec<String>>().join("");
+    //.flatten().collect::<String>();
+    println!("Overwriteing {} chars with eq", i);
+    let len = output.len();
+    output.replace_range(len-i..len, &String::from("=").repeat(i));
+    println!("{}", output);
     output
 }
 
