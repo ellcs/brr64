@@ -23,11 +23,8 @@ fn base64_encode(input: String) -> String {
     let mut out: Vec<u8> = vec![0, 0, 0, 0];
 
 
-    let mut i = 0;
-    while output.len() % 3 != 0 {
-        output.push('\0');
-        i = i + 1; 
-    }
+    let i = (3 - (output.len() % 3)) % 3;
+    output.extend(std::iter::repeat('\0').take(i));
 
     output = output.bytes().
         collect::<Vec<u8>>().
