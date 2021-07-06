@@ -17,11 +17,6 @@ fn test_rev_str() {
     assert!(&r == "fdsa");
 }
 
-#[test]
-fn test_make_string_from_byte_vec() {
-    let bytevec: Vec<u8> = vec![0x41, 0x42, 0x43];
-    //let s: String = bytevec.collect();
-}
 
 #[test]
 fn test_chunks() {
@@ -32,6 +27,16 @@ fn test_chunks() {
         for_each(|c| {
             let _a: u8 = c.iter().sum();
         })
+}
+
+
+#[test]
+fn test_extend() {
+    let mut output = String::from("aa");
+    let i = (3 - (output.len() % 3)) % 3;
+    output.extend(std::iter::repeat('a').take(i));
+    assert_eq!(output, "aaa");
+
 }
 
 #[test]

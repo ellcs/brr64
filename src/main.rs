@@ -2,15 +2,15 @@ mod playgroud;
 
 use std::env;
 use std::io;
-use std::io::{Write, Read};
+//use std::io::{Write,Read};
 
 const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 fn main() {
     let mut input = String::new();
-    let args: Vec<String> = env::args().collect();
+    let _args: Vec<String> = env::args().collect();
 
-    while let Ok(n) = io::stdin().read_line(&mut input) {
+    while let Ok(_n) = io::stdin().read_line(&mut input) {
         // rm -f \n
         input.pop();
         let output = base64_encode(input.clone());
