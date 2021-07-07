@@ -19,18 +19,17 @@ fn main() {
     }
 }
 fn base64_encode(input: String) -> String {
-    let mut output = input.clone();
+    let mut output = input;
     let mut out: Vec<u8> = vec![0, 0, 0, 0];
-
 
     let i = (3 - (output.len() % 3)) % 3;
     output.extend(std::iter::repeat('\0').take(i));
 
     output = output.bytes().
         collect::<Vec<u8>>().
-        chunks(3 as usize).
+        chunks(3_usize).
         map(|three_chars: &[u8]| {
-            base64_three_chars(&three_chars, &mut out);
+            base64_three_chars(three_chars, &mut out);
             out.iter().map(|&x| x as char).collect::<String>()
         }).collect::<Vec<String>>().join("");
 

@@ -39,6 +39,10 @@ fn test_extend() {
 
 }
 
+fn fooadd(a: &u8, b: &u8) -> u8 {
+   a + b 
+}
+
 #[test]
 #[should_panic]
 fn test_overflows() {
@@ -47,9 +51,6 @@ fn test_overflows() {
     fooadd(&a, &b);
 }
 
-fn fooadd(a: &u8, b: &u8) -> u8 {
-   a + b 
-}
 
 #[test]
 fn test_cycle() {
@@ -71,11 +72,11 @@ fn test_cycle() {
     assert!(called);
 }
 
-fn every_three_chars<F: FnMut(&[u8])>(s: &str, steps: u8, mut f: F) -> () {
+fn every_three_chars<F: FnMut(&[u8])>(s: &str, steps: u8, mut f: F) {
     s.bytes().
         collect::<Vec<u8>>().
         chunks(steps as usize).
         for_each(|c| {
-            f(&c)
+            f(c)
         });
 }
