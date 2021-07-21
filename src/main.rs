@@ -13,13 +13,14 @@ fn main() {
     while let Ok(_n) = io::stdin().read_line(&mut input) {
         // rm -f \n
         input.pop();
-        let output = base64_encode(input.clone());
+        let output = base64_encode(&input);
         println!("{}", output);
         input.clear();
     }
 }
-fn base64_encode(input: String) -> String {
-    let mut output = input;
+
+fn base64_encode(input: &String) -> String {
+    let mut output = input.clone();
     let mut out: Vec<u8> = vec![0, 0, 0, 0];
 
     let i = (3 - (output.len() % 3)) % 3;
@@ -38,24 +39,95 @@ fn base64_encode(input: String) -> String {
     output
 }
 
+
+//fn base64_encode_symbolic(input: &String) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
+fn base64_encode_symbolic(input: &String) -> Vec<String> {
+    let mut input0: String = input.clone();
+    let mut input1: String = input.clone();
+    let mut input2: String = input.clone();
+
+    input1.insert(0, '\0');
+    input2.insert_str(0, "\0\0");
+
+    let mut out: Vec<u8> = vec![0, 0, 0, 0];
+
+    let mut outputs = vec![&mut input0, &mut input1, &mut input2].into_iter().map(|input| {
+        let i = (3 - (input.len() % 3)) % 3;
+        input.extend(std::iter::repeat('\0').take(i));
+
+        let mut cont = input.bytes().
+            collect::<Vec<u8>>().
+            chunks(3_usize).
+            map(|three_chars: &[u8]| {
+                base64_three_chars(three_chars, &mut out);
+                out.iter().map(|&x| x as char).collect::<String>()
+            }).collect::<Vec<String>>().join("");
+
+        let len = cont.len();
+        cont.replace_range(len-i..len, &String::from("=").repeat(i));
+        cont
+    }).collect::<Vec<String>>();
+    outputs[1].replace_range(0..1, &String::from("=").repeat(1));
+    outputs[2].replace_range(0..2, &String::from("=").repeat(2));
+    outputs
+    //(outputs[0], outputs[1], outputs[2])
+}
+
 #[test]
-fn test_base64_encode_empty_string() {
-    assert_eq!(base64_encode(String::from("")), "");
+fn test_base64_symbolic_empty() {
+    let empty = vec!("", "=A==", "==A=");
+    assert_eq!(base64_encode_symbolic(&"".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_a() {
+    let empty = vec!("YQ==", "=GE=", "==Bh");
+    assert_eq!(base64_encode_symbolic(&"a".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_za() {
+    let empty = vec!("emE=", "=Hph", "==B6YQ==");
+    assert_eq!(base64_encode_symbolic(&"za".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_az() {
+    let empty = vec!("YXo=", "=GF6", "==Bheg==");
+    assert_eq!(base64_encode_symbolic(&"az".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_zzz() {
+    let empty = vec!("enp6", "=Hp6eg==", "==B6eno=");
+    assert_eq!(base64_encode_symbolic(&"zzz".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_zzzz() {
+    let empty = vec!("enp6eg==", "=Hp6eno=", "==B6enp6");
+    assert_eq!(base64_encode_symbolic(&"zzzz".to_string()), empty);
+}
+
+#[test]
+fn test_base64_symbolic_zzzz() {
+    let empty = vec!("enp6eg==", "=Hp6eno=", "==B6enp6");
+    assert_eq!(base64_encode_symbolic(&"zzzz".to_string()), empty);
 }
 
 #[test]
 fn test_base64_encode_aa() {
-    assert_eq!(base64_encode(String::from("aa")), "YWE=");
+    assert_eq!(base64_encode(&String::from("aa")), "YWE=");
 }
 
 #[test]
 fn test_base64_encode_a() {
-    assert_eq!(base64_encode(String::from("a")), "YQ==");
+    assert_eq!(base64_encode(&String::from("a")), "YQ==");
 }
 
 #[test]
 fn test_base64_encode_asdqw() {
-    assert_eq!(base64_encode(String::from("asdqw")), "YXNkcXc=");
+    assert_eq!(base64_encode(&String::from("asdqw")), "YXNkcXc=");
 }
 
 
