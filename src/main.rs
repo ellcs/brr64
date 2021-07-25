@@ -3,6 +3,8 @@ mod playgroud;
 use std::env;
 use std::io;
 //use std::io::{Write,Read};
+use std::io::Read;
+//use std::io::Bytes;
 
 const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -70,50 +72,52 @@ fn base64_encode_symbolic(input: &String) -> Vec<String> {
     outputs[1].replace_range(0..1, &String::from("=").repeat(1));
     outputs[2].replace_range(0..2, &String::from("=").repeat(2));
     outputs
-    //(outputs[0], outputs[1], outputs[2])
 }
 
-#[test]
-fn test_base64_symbolic_empty() {
-    let empty = vec!("", "=A==", "==A=");
-    assert_eq!(base64_encode_symbolic(&"".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_a() {
-    let empty = vec!("YQ==", "=GE=", "==Bh");
-    assert_eq!(base64_encode_symbolic(&"a".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_za() {
-    let empty = vec!("emE=", "=Hph", "==B6YQ==");
-    assert_eq!(base64_encode_symbolic(&"za".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_az() {
-    let empty = vec!("YXo=", "=GF6", "==Bheg==");
-    assert_eq!(base64_encode_symbolic(&"az".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_zzz() {
-    let empty = vec!("enp6", "=Hp6eg==", "==B6eno=");
-    assert_eq!(base64_encode_symbolic(&"zzz".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_zzzz() {
-    let empty = vec!("enp6eg==", "=Hp6eno=", "==B6enp6");
-    assert_eq!(base64_encode_symbolic(&"zzzz".to_string()), empty);
-}
-
-#[test]
-fn test_base64_symbolic_zzzz() {
-    let empty = vec!("enp6eg==", "=Hp6eno=", "==B6enp6");
-    assert_eq!(base64_encode_symbolic(&"zzzz".to_string()), empty);
-}
+//#[test]
+//fn test_base64_symbolic_empty() {
+//    //let empty: std::io::Bytes<&[u8]> = vec!(b"".bytes(), b"=A==".bytes(), b"==A=".bytes());
+//    //let empty: Vec<Bytes> = vec!(b"".bytes(), b"=A==".bytes(), b"==A=".bytes());
+//    let empty: Vec<&[u8]> = vec!(b"", b"=a==", b"==a=");
+//    assert_eq!(base64_encode_symbolic(b"".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_a() {
+//    let empty = vec!(b"YQ==", b"=GE=", b"==Bh");
+//    assert_eq!(base64_encode_symbolic(b"a".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_za() {
+//    let empty = vec!(b"emE=", b"=Hph", b"==B6YQ==");
+//    assert_eq!(base64_encode_symbolic(b"za".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_az() {
+//    let empty = vec!(b"YXo=", b"=GF6", b"==Bheg==");
+//    assert_eq!(base64_encode_symbolic(b"az".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_zzz() {
+//    let empty = vec!(b"enp6", b"=Hp6eg==", b"==B6eno=");
+//    assert_eq!(base64_encode_symbolic(b"zzz".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_zzzz() {
+//    let empty = vec!(b"enp6eg==", b"=Hp6eno=", b"==B6enp6");
+//    assert_eq!(base64_encode_symbolic(b"zzzz".bytes()), empty);
+//}
+//
+//#[test]
+//fn test_base64_symbolic_change_me_zzzz() {
+//    let empty = vec!(b"enp6eg==", b"=Hp6eno=", b"==B6enp6");
+//    assert_eq!(base64_encode_symbolic(b"zzzz".bytes()), empty);
+//    panic!();
+//}
 
 #[test]
 fn test_base64_encode_aa() {

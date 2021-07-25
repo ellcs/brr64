@@ -1,3 +1,13 @@
+use std::io::Read;
+
+#[test]
+fn test_bytes_and_bites() {
+    let empty: Vec<&[u8]> = vec!(b"", b"=a==", b"==a=");
+    let b = b"\xff".bytes();
+    //b.asd();
+    //assert_eq!(b"".bytes(), b"");
+}
+
 #[test]
 fn test_byte_mapping() {
     let s: &str = "abcd";
