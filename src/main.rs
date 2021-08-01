@@ -4,7 +4,6 @@ use std::env;
 use std::io;
 //use std::io::{Write,Read};
 use std::io::Read;
-use std::str::Bytes;
 
 const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
