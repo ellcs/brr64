@@ -1,3 +1,56 @@
+use std::io::Read;
+
+#[derive(Debug)]
+enum Tripplet {
+    Symbolic,
+    Real(Vec<u8>)
+}
+
+#[derive(Debug)]
+enum SymbolicU8 {
+    Symbolic,
+    Real(u8)
+}
+
+
+#[test]
+fn test_symbolic_u8_matched() {
+    let matchme : Vec<SymbolicU8> = vec![SymbolicU8::Symbolic, SymbolicU8::Real(5)];
+    matchme.chunks(2_usize).for_each(|s| {
+        match s {
+            [SymbolicU8::Symbolic, SymbolicU8::Real(r)] => println!("sym"),
+            [SymbolicU8::Real(r), SymbolicU8::Symbolic] => println!("real {}", r),
+            _ => panic!()
+        }
+    });
+}
+
+
+#[test]
+fn test_symbolic_u8() {
+    let mut vec : Vec<SymbolicU8> = vec![];
+    vec.push(SymbolicU8::Symbolic);
+    vec.push(SymbolicU8::Real(99));
+    println!("{:?}", vec);
+}
+
+
+#[test]
+fn test_tripplet() {
+    let mut tripplets : Vec<Tripplet> = vec![];
+    tripplets.push(Tripplet::Symbolic);
+    tripplets.push(Tripplet::Real(vec![0, 0, 0, 0]));
+    println!("{:?}", tripplets);
+}
+
+#[test]
+fn test_bytes_and_bites() {
+    let empty: Vec<&[u8]> = vec!(b"", b"=a==", b"==a=");
+    let b = b"\xff".bytes();
+    //b.asd();
+    //assert_eq!(b"".bytes(), b"");
+}
+
 #[test]
 fn test_byte_mapping() {
     let s: &str = "abcd";
