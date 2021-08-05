@@ -12,14 +12,21 @@ enum SymbolicU8 {
     Real(u8)
 }
 
+enum Char64 {
+    Sym,
+    Real(u8)
+}
 
 #[test]
 fn test_symbolic_u8_matched() {
-    let matchme : Vec<SymbolicU8> = vec![SymbolicU8::Symbolic, SymbolicU8::Real(5)];
-    matchme.chunks(2_usize).for_each(|s| {
+    let matchme : Vec<Char64> = vec![Char64::Sym, Char64::Real(5), Char64::Real(5)];
+    matchme.chunks(3_usize).for_each(|s| {
         match s {
-            [SymbolicU8::Symbolic, SymbolicU8::Real(r)] => println!("sym"),
-            [SymbolicU8::Real(r), SymbolicU8::Symbolic] => println!("real {}", r),
+            [Char64::Real(r1), Char64::Real(r2), Char64::Real(r3)] => {},
+            [Char64::Sym,      Char64::Real(r2), Char64::Real(r3)] => {},
+            [Char64::Sym,      Char64::Sym,      Char64::Real(r3)] => {},
+            [Char64::Real(r1), Char64::Sym,      Char64::Sym]      => {},
+            [Char64::Real(r1), Char64::Real(r2), Char64::Sym]      => {},
             _ => panic!()
         }
     });
@@ -45,8 +52,8 @@ fn test_tripplet() {
 
 #[test]
 fn test_bytes_and_bites() {
-    let empty: Vec<&[u8]> = vec!(b"", b"=a==", b"==a=");
-    let b = b"\xff".bytes();
+    let _empty: Vec<&[u8]> = vec!(b"", b"=a==", b"==a=");
+    let _b = b"\xff".bytes();
     //b.asd();
     //assert_eq!(b"".bytes(), b"");
 }
