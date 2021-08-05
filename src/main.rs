@@ -51,6 +51,61 @@ fn base64_encode_symbolic(input: Vec<u8>) -> Vec<Vec<u8>> {
     outputs
 }
 
+enum Char64 {
+    Sym,
+    Real(u8)
+}
+
+fn base64_three_chars_symbolic(chars: &[Char64], result: &mut Vec<u8>) {
+    match chars {
+        [Char64::Real(r1), Char64::Real(r2), Char64::Real(r3)] => {
+            let group24: u32 = (((*r1 as u32) << 16) | ((*r2 as u32) << 8) | (*r3 as u32)).into();
+            result[0] = base64_encode::BASE64_CHARS[((group24 >> 18) & 0x3f) as usize];
+            result[1] = base64_encode::BASE64_CHARS[((group24 >> 12) & 0x3f) as usize];
+            result[2] = base64_encode::BASE64_CHARS[((group24 >> 6) & 0x3f) as usize];
+            result[3] = base64_encode::BASE64_CHARS[(group24 & 0x3f) as usize];
+        },
+        [Char64::Sym,      Char64::Real(r2), Char64::Real(r3)] => {
+            let group24: u32 = ((0_u32 << 16) | ((*r2 as u32) << 8) | (*r3 as u32)).into();
+            result[0] = base64_encode::EQUALS;
+            result[1] = base64_encode::BASE64_CHARS[((group24 >> 12) & 0x3f) as usize];
+            result[2] = base64_encode::BASE64_CHARS[((group24 >> 6) & 0x3f) as usize];
+            result[3] = base64_encode::BASE64_CHARS[(group24 & 0x3f) as usize];
+        },
+        [Char64::Sym,      Char64::Sym,      Char64::Real(r3)] => {
+            let group24: u32 = ((0_u32 << 16) | (0_u32 << 8) | (*r3 as u32)).into();
+            result[0] = base64_encode::EQUALS;
+            result[1] = base64_encode::EQUALS;
+            result[2] = base64_encode::BASE64_CHARS[((group24 >> 6) & 0x3f) as usize];
+            result[3] = base64_encode::BASE64_CHARS[(group24 & 0x3f) as usize];
+        },
+        [Char64::Real(r1), Char64::Sym,      Char64::Sym]      => {
+            let group24: u32 = (((*r1 as u32) << 16) | (0_u32 << 8) | 0_u32).into();
+            result[0] = base64_encode::BASE64_CHARS[((group24 >> 18) & 0x3f) as usize];
+            result[1] = base64_encode::BASE64_CHARS[((group24 >> 12) & 0x3f) as usize];
+            result[2] = base64_encode::EQUALS;
+            result[3] = base64_encode::EQUALS;        
+        },
+        [Char64::Real(r1), Char64::Real(r2), Char64::Sym]      => {
+            let group24: u32 = (((*r1 as u32) << 16) | ((*r2 as u32) << 8) | 0_u32).into();
+            result[0] = base64_encode::BASE64_CHARS[((group24 >> 18) & 0x3f) as usize];
+            result[1] = base64_encode::BASE64_CHARS[((group24 >> 12) & 0x3f) as usize];
+            result[2] = base64_encode::BASE64_CHARS[((group24 >> 6) & 0x3f) as usize];
+            result[3] = base64_encode::EQUALS;
+        },
+        _ => panic!()
+    }
+}
+
+
+#[test]
+fn base64_three_chars_symbolic_first_case() {
+    let array = [Char64::Real(0), Char64::Real(1), Char64::Real(3)];
+    let mut output: Vec<u8> = vec![0, 0, 0, 0];
+    base64_three_chars_symbolic(&array, &mut output);
+    assert_eq!(output, vec![65, 65, 69, 68]);
+}
+
 fn symbolic_test(input: &[u8], vecs: Vec<&[u8]>) {
     let empty: Vec<Vec<u8>> = vecs.iter().map(|b| b.to_vec()).collect();
     assert_eq!(base64_encode_symbolic(input.to_vec()), empty);
