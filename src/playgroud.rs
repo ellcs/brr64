@@ -22,11 +22,11 @@ fn test_symbolic_u8_matched() {
     let matchme : Vec<Char64> = vec![Char64::Sym, Char64::Real(5), Char64::Real(5)];
     matchme.chunks(3_usize).for_each(|s| {
         match s {
-            [Char64::Real(r1), Char64::Real(r2), Char64::Real(r3)] => {},
-            [Char64::Sym,      Char64::Real(r2), Char64::Real(r3)] => {},
-            [Char64::Sym,      Char64::Sym,      Char64::Real(r3)] => {},
-            [Char64::Real(r1), Char64::Sym,      Char64::Sym]      => {},
-            [Char64::Real(r1), Char64::Real(r2), Char64::Sym]      => {},
+            [Char64::Real(_r1), Char64::Real(_r2), Char64::Real(_r3)] => {},
+            [Char64::Sym,       Char64::Real(_r2), Char64::Real(_r3)] => {},
+            [Char64::Sym,       Char64::Sym,       Char64::Real(_r3)] => {},
+            [Char64::Real(_r1), Char64::Sym,       Char64::Sym]      => {},
+            [Char64::Real(_r1), Char64::Real(_r2), Char64::Sym]      => {},
             _ => panic!()
         }
     });
