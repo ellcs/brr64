@@ -1,5 +1,4 @@
 pub const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-pub const EQUALS : u8 = b'=';
 
 pub fn base64_encode(input: &String) -> String {
     let mut output = input.clone();
