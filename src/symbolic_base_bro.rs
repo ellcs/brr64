@@ -37,7 +37,6 @@ impl From<&OutChar64> for String {
     fn from(outchar: &OutChar64) -> Self {
         let mut out = String::new();
         match outchar {
-            OutChar64::Equals => out.push('='),
             OutChar64::Single(byte) => out.push(*byte as char),
             OutChar64::Multiple(bytes) => {
                 out.push('(');
@@ -47,7 +46,9 @@ impl From<&OutChar64> for String {
                                 collect::<Vec<String>>().join("|");
                 out.push_str(&multiple);
                 out.push(')');
-            }
+            },
+            //OutChar64::Equals => {out.push('=')}
+            OutChar64::Equals => { }
         }
         out
     }
@@ -73,31 +74,33 @@ pub fn generate_candidates(input: &String) -> Candidates {
     let mut input2: Vec<InChar64> = input0.clone();
 
     input1.insert(0, InChar64::Sym);
-    input2.insert(0, InChar64::Sym); input2.insert(0, InChar64::Sym);
+    input2.insert(0, InChar64::Sym); 
+    input2.insert(0, InChar64::Sym);
 
-    let mut out: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
-
-    let mut outputs = vec![&mut input0, &mut input1, &mut input2].into_iter().map(|input| {
+    let mut out: Vec<OutChar64> = std::iter::repeat(OutChar64::Equals).take(4).collect();
+    let outputs = vec![&mut input0, &mut input1, &mut input2].into_iter().map(|input| {
         let i = (3 - (input.len() % 3)) % 3;
         input.extend(std::iter::repeat(InChar64::Sym).take(i));
-
-        let mut output: Vec<OutChar64> = input.
-            chunks(3_usize).
-            fold(Vec::new(), |mut accu, three_chars: &[InChar64]| {
+        input.
+          chunks(3_usize).
+          fold(Vec::new(), |mut accu, three_chars: &[InChar64]| {
                 base64_three_chars_symbolic(three_chars, &mut out);
                 accu.append(&mut out.clone());
                 accu
-            });
-       output 
+            })
     }).collect::<Vec<Vec<OutChar64>>>();
     Candidates(outputs[0].clone(), outputs[1].clone(), outputs[2].clone())
 }
 
+#[test]
+fn test_generate_candidates_regex_empty() {
+    assert_eq!("(||)", String::from(&Candidates::from(&String::from(""))));
+}
 
 #[test]
-fn test_generate_candidates_regex() {
-    assert_eq!("(|====|====)", String::from(&Candidates::from(&String::from(""))));
-    assert_eq!("", String::from(&Candidates::from(&String::from("A"))));
+fn test_generate_candidates_regex_simple_a() {
+    let a_result = String::from("(Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)|(E|U|k|0)(E|F|G|H)|(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)B)");
+    assert_eq!(a_result, String::from(&Candidates::from(&String::from("A"))));
 }
 
 #[test]
@@ -169,17 +172,17 @@ fn second_case(c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
 
 // +-------------------------------------------+
 // |            I        II        III         |
-// | ascii |SSSSSS_SS|XXXX_XXXX|87_654321|     |
+// | ascii |SSSSSS_SS|SSSS_SSSS|87_654321|     |
 // | b64   |XXXXXX|XX_XXXX|????_21|654321|     |
 // |          a       b       c      d         |
 // +-------------------------------------------+
-#[inline(always)]
+//#[inline(always)]
 fn third_case(c3: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (0_u32 << 16) | (0_u32 << 8) | c3;
     result[0] = OutChar64::Equals;
     result[1] = OutChar64::Equals;
-    let partial = ((group24 >> 12) & 0b000011) as usize; 
-    result[2] = OutChar64::Multiple((0..16).map(|n| BASE64_CHARS[partial + (n * 4)]).collect::<Vec<u8>>()); // mult
+    let partial = ((group24 >> 6) & 0b000011) as usize; 
+    result[2] = OutChar64::Multiple((0..16).map(|n| { BASE64_CHARS[partial + (n * 4)]}).collect::<Vec<u8>>()); // mult
     result[3] = OutChar64::Single(BASE64_CHARS[(group24 & 0x3f) as usize]);
 }
 
