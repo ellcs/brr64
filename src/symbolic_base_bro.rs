@@ -27,9 +27,10 @@ enum OutChar64 {
 #[derive(Clone)]
 pub struct Candidates(Vec<OutChar64>, Vec<OutChar64>, Vec<OutChar64>);
 
-impl From<&String> for Candidates {
-    fn from(input: &String) -> Self {
-        generate_candidates(input)
+
+impl From<&Candidates> for Regex {
+    fn from(candidates: &Candidates) -> Self {
+        Regex::new(&String::from(candidates)).unwrap()
     }
 }
 
@@ -94,13 +95,16 @@ pub fn generate_candidates(input: &String) -> Candidates {
 
 #[test]
 fn test_generate_candidates_regex_empty() {
-    assert_eq!("(||)", String::from(&Candidates::from(&String::from(""))));
+    assert_eq!("(||)", String::from(&generate_candidates(&String::from(""))));
 }
 
 #[test]
 fn test_generate_candidates_regex_simple_a() {
-    let a_result = String::from("(Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)|(E|U|k|0)(E|F|G|H)|(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)B)");
-    assert_eq!(a_result, String::from(&Candidates::from(&String::from("A"))));
+    let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)";
+    let second = "(E|U|k|0)(E|F|G|H)";
+    let third = "(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)B";
+    let a_result = format!("({}|{}|{})", first, second, third);
+    assert_eq!(a_result, String::from(&generate_candidates(&String::from("A"))));
 }
 
 #[test]

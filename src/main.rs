@@ -2,22 +2,25 @@ mod playgroud;
 mod base64_encode;
 mod symbolic_base_bro;
 
-use regex::Regex;
 use std::env;
 use std::io;
 
 
 fn main() {
     let mut input = String::new();
-    let _args: Vec<String> = env::args().collect();
+    let arg : String = env::args().nth(1).expect("Please provide string");
 
-    while let Ok(_n) = io::stdin().read_line(&mut input) {
-        // rm -f \n
-        input.pop();
-        let output = base64_encode::base64_encode(&input);
-        println!("{}", output);
-        input.clear();
-    }
+    let regex = String::from(&symbolic_base_bro::generate_candidates(&arg));
+    println!("{}", regex);
+
+    //_args.get(0);
+    //while let Ok(_n) = io::stdin().read_line(&mut input) {
+    //    // rm -f \n
+    //    input.pop();
+    //    let output = base64_encode::base64_encode(&input);
+    //    println!("{}", output);
+    //    input.clear();
+    //}
 }
 
 fn base64_encode_symbolic(input: Vec<u8>) -> Vec<Vec<u8>> {
