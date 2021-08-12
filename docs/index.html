@@ -2,23 +2,40 @@
   <head>
     <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-
-<head></head>
+<head>
+  <title>brr64 - base64 flat grepper</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
 <body>
 
+<div class="w3-content w3-padding-large w3-margin-top">
 
-Code has been stolen from:</br>
+	<h1>brr64</h3>
+	<h2>base64 flat grepper</h4>
 
-	https://www.hellorust.com/demos/sha1/index.html
+	<div class="w3-container w3-padding-large">
+	  	<label class="w3-text"><b>Generate a flat base64 grepper:</b></label>
+		<textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Type here"></textarea>
+	</div>
+	
+	<div class="w3-container w3-padding-large">
+		<label class="w3-text"><b>Generated Regex:</b></label>
+		<p class="w3-panel w3-border" style="font-family: monospace; padding: 0.5em;" id="output">Provide input...</p>
+	</div>
+	
 
-Generate a flat base64 grepper:
-<div class="form">
-  <input type="text" name="input" id="input" value="Type here">
+	<div class="w3-container w3-padding-large" style=" position: fixed; bottom: 0;">
+	<footer class="w3-display-container w3-content ">
+		Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a></br></br>
+
+
+		The glue-code between JavaScript and Rust has been stolen from:</br>
+	
+		<a href="https://www.hellorust.com/demos/sha1/index.html">https://www.hellorust.com/demos/sha1/index.html</a>
+	</footer>
+
+
 </div>
-<h3>Digest:</h3>
-<code>egrep "<code id="output">Provide input...</code>"</code>
-
 <script>
 function fetchAndInstantiate(url, importObject) {
   return fetch(url).then(response =>
