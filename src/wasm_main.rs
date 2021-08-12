@@ -1,5 +1,15 @@
 mod symbolic_base_bro;
 
+/*
+ * This file is published under the CC0 licence.
+ *
+ *      https://creativecommons.org/publicdomain/zero/1.0/deed.en
+ *
+ * Most of the code in this file has been copied from:
+ *
+ *      https://www.hellorust.com/demos/sha1/index.html
+ */
+
 use std::mem;
 use std::ffi::{CString, CStr};
 use std::os::raw::{c_char, c_void};
@@ -42,21 +52,3 @@ pub extern "C" fn dealloc_str(ptr: *mut c_char) {
     }
 }
 
-//#[wasm_bindgen]
-//pub fn generate_candidates_cstr(input: &String) -> String {
-//    String::from(&symbolic_base_bro::generate_candidates(&String::from(input)))
-//}
-
-
-
-//#[wasm_bindgen(start)]
-//pub fn start() -> Result<(), JsValue> {
-//    Ok(())
-//}
-//pub fn start() -> Result<(), JsValue> {
-//    //let mut input = String::new();
-//    //let arg : String = env::args().nth(1).expect("Please provide string");
-//
-//    //let regex = String::from(&symbolic_base_bro::generate_candidates(&arg));
-//    Ok(())
-//}
