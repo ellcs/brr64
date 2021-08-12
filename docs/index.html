@@ -9,18 +9,23 @@
 <body>
 
 <div class="w3-content w3-padding-large w3-margin-top">
+	<div class="w3-container w3-padding-large">
+	<h1>brr64 - base64 flat grepper</h3>
+	Have you ever looked for base64 encoded content in multiple, huge files? The issue is: You can not filter all possible base64 characters and decode them, in the hope of finding the needle. brr64 generates a regular expression which contains all posibilities of the total base64 encoded content. No false-positives or true-negatives. This allows you to search in a flat-file manner, without decoding base64 at all.
+	</div>
 
-	<h1>brr64</h3>
-	<h2>base64 flat grepper</h4>
 
 	<div class="w3-container w3-padding-large">
 	  	<label class="w3-text"><b>Generate a flat base64 grepper:</b></label>
-		<textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Type here"></textarea>
+		<textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Provide the plaintext you want to search..."></textarea>
+		<label class="w3-text"><small>Works with Unicode, newline, carriage return and basically everything. Something does not work? Open an <a href="https://github.com/ellcs/brr64/issues">issue</a>.</small></label>
 	</div>
+
 	
 	<div class="w3-container w3-padding-large">
-		<label class="w3-text"><b>Generated Regex:</b></label>
-		<p class="w3-panel w3-border" style="font-family: monospace; padding: 0.5em;" id="output">Provide input...</p>
+		<label class="w3-text"><b>Generated Regex for grep:</b> <button id="copy">copy</button></label>
+		<textarea class="w3-input w3-border" style="font-family: monospace" type="text" id="output">Provide input...</textarea>
+		<label class="w3-text"><small>Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. </small></label>
 	</div>
 	
 
@@ -28,15 +33,23 @@
 	<footer class="w3-display-container w3-content ">
 		Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a></br></br>
 
+		Licence: This website licensed under <a href="">CC0</a> because the glue-code between JavaScript and Rust has been copied from <a href="https://www.hellorust.com/demos/sha1/index.html">https://www.hellorust.com</a>. This licence does not apply on the whole brr64 project.</br></br>
 
-		The glue-code between JavaScript and Rust has been stolen from:</br>
-	
-		<a href="https://www.hellorust.com/demos/sha1/index.html">https://www.hellorust.com/demos/sha1/index.html</a>
+		Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in brr64 by you, as defined in the CC0-1.0 license, shall be dedicated to the public domain and licensed as above, without any additional terms or conditions.</br></br>
+
+		External dependencies used in example code remain under their own license.
 	</footer>
-
-
 </div>
 <script>
+function copy() {
+  var copyText = document.querySelector("#output");
+  copyText.select();
+  document.execCommand("copy");
+}
+
+document.querySelector("#copy").addEventListener("click", copy);
+
+
 function fetchAndInstantiate(url, importObject) {
   return fetch(url).then(response =>
     response.arrayBuffer()
@@ -119,11 +132,12 @@ fetchAndInstantiate("./wasm_brr64.wasm", {})
 
     var input = document.getElementById("input");
     var output = document.getElementById("output");
-    output.innerText = Sha1.digest(input.value);
 
-    input.addEventListener("keyup", function(e) {
-      output.innerText = Sha1.digest(input.value);
-    });
+    trigger = function(e) {
+      output.innerText = "egrep -a -b \"" + Sha1.digest(input.value) + '"';
+    }
+    input.addEventListener("keyup", trigger);
+    trigger();
   });
 </script>
 </body>
