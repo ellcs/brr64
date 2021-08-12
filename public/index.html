@@ -92,7 +92,7 @@ var Sha1 = {
   }
 }
 
-fetchAndInstantiate("./target/wasm32-unknown-unknown/debug/wasm_brr64.wasm", {})
+fetchAndInstantiate("./wasm_brr64.wasm", {})
   .then(mod => {
     Module.alloc   = mod.exports.alloc;
     Module.dealloc = mod.exports.dealloc;
