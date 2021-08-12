@@ -55,6 +55,7 @@ impl From<&OutChar64> for String {
     }
 }
 
+
 impl From<&Candidates> for String {
     fn from(candidates: &Candidates) -> Self {
         let mut out = String::new();
@@ -68,6 +69,7 @@ impl From<&Candidates> for String {
         out
     }
 }
+
 
 pub fn generate_candidates(input: &String) -> Candidates {
     let mut input0: Vec<InChar64> = input.bytes().map(|b| { InChar64::Real(b as u32)}).collect();

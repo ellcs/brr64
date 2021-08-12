@@ -1,0 +1,113 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+<head></head>
+<body>
+
+
+Code has been stolen from:</br>
+
+	https://www.hellorust.com/demos/sha1/index.html
+
+Generate a flat base64 grepper:
+<div class="form">
+  <input type="text" name="input" id="input" value="Type here">
+</div>
+<h3>Digest:</h3>
+<code>egrep "<code id="output">Provide input...</code>"</code>
+
+<script>
+function fetchAndInstantiate(url, importObject) {
+  return fetch(url).then(response =>
+    response.arrayBuffer()
+  ).then(bytes =>
+    WebAssembly.instantiate(bytes, importObject)
+  ).then(results =>
+    results.instance
+  );
+}
+
+// Copy a nul-terminated string from the buffer pointed to.
+// Consumes the old data and thus deallocated it.
+function copyCStr(module, ptr) {
+  let orig_ptr = ptr;
+  const collectCString = function* () {
+    let memory = new Uint8Array(module.memory.buffer);
+    while (memory[ptr] !== 0) {
+      if (memory[ptr] === undefined) { throw new Error("Tried to read undef mem") }
+      yield memory[ptr]
+      ptr += 1
+    }
+  }
+
+  const buffer_as_u8 = new Uint8Array(collectCString())
+  const utf8Decoder = new TextDecoder("UTF-8");
+  const buffer_as_utf8 = utf8Decoder.decode(buffer_as_u8);
+  module.dealloc_str(orig_ptr);
+  return buffer_as_utf8
+}
+
+function getStr(module, ptr, len) {
+  const getData = function* (ptr, len) {
+    let memory = new Uint8Array(module.memory.buffer);
+    for (let index = 0; index < len; index++) {
+      if (memory[ptr] === undefined) { throw new Error(`Tried to read undef mem at ${ptr}`) }
+      yield memory[ptr + index]
+    }
+  }
+
+  const buffer_as_u8 = new Uint8Array(getData(ptr/8, len/8));
+  const utf8Decoder = new TextDecoder("UTF-8");
+  const buffer_as_utf8 = utf8Decoder.decode(buffer_as_u8);
+  return buffer_as_utf8;
+}
+
+function newString(module, str) {
+  const utf8Encoder = new TextEncoder("UTF-8");
+  let string_buffer = utf8Encoder.encode(str)
+  let len = string_buffer.length
+  let ptr = module.alloc(len+1)
+
+  let memory = new Uint8Array(module.memory.buffer);
+  for (i = 0; i < len; i++) {
+    memory[ptr+i] = string_buffer[i]
+  }
+
+  memory[ptr+len] = 0;
+
+  return ptr;
+}
+
+window.Module = {}
+var Sha1 = {
+  digest: function(str) {
+    let buf = newString(Module, str);
+    let outptr = Module.digest(buf);
+    let result = copyCStr(Module, outptr);
+    Module.dealloc_str(buf);
+    return result;
+  }
+}
+
+fetchAndInstantiate("./target/wasm32-unknown-unknown/debug/wasm_brr64.wasm", {})
+  .then(mod => {
+    Module.alloc   = mod.exports.alloc;
+    Module.dealloc = mod.exports.dealloc;
+    Module.dealloc_str = mod.exports.dealloc_str;
+    Module.digest  = mod.exports.candidates;
+    Module.memory  = mod.exports.memory;
+
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+    output.innerText = Sha1.digest(input.value);
+
+    input.addEventListener("keyup", function(e) {
+      output.innerText = Sha1.digest(input.value);
+    });
+  });
+</script>
+</body>
+</html>

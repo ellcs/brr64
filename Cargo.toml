@@ -8,3 +8,13 @@ edition = "2018"
 
 [dependencies]
 regex = "1"
+wasm-bindgen = "=0.2.65"
+
+[lib]
+name = "wasm_brr64"
+crate-type = ["cdylib"]
+path = "src/wasm_main.rs"
+
+[[bin]]
+name = "brr64"
+path = "src/main.rs"
