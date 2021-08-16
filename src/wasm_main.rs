@@ -39,8 +39,14 @@ pub extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
 #[no_mangle]
 pub extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
     unsafe {
-        let data = CStr::from_ptr(data);
-        let out = String::from(&symbolic_base_bro::generate_candidates(&data.to_string_lossy().into_owned()));
+        let data = CStr::from_ptr(data).to_string_lossy().into_owned();
+        // print everything and remove them in javascript, because handling those options via.
+        // rust-javascript ffi is too much work.
+        let options = convert::Options { 
+            match_newlines: true, 
+            print_equals:  true
+        };
+        let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&data), &options);
         let s = CString::new(out).unwrap();
         s.into_raw()
     }

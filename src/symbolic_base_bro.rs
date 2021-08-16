@@ -30,24 +30,24 @@ pub struct Candidates(pub Vec<OutChar64>, pub Vec<OutChar64>, pub Vec<OutChar64>
 
 
 
-impl From<&Candidates> for Regex {
-    fn from(candidates: &Candidates) -> Self {
-        Regex::new(&String::from(candidates)).unwrap()
-    }
-}
-
-impl From<&OutChar64> for String {
-    fn from(_outchar: &OutChar64) -> Self {
-        String::new()
-    }
-}
-
-
-impl From<&Candidates> for String {
-    fn from(_candidates: &Candidates) -> Self {
-        String::new()
-    }
-}
+//impl From<&Candidates> for Regex {
+//    fn from(candidates: &Candidates) -> Self {
+//        Regex::new(&String::from(candidates)).unwrap()
+//    }
+//}
+//
+//impl From<&OutChar64> for String {
+//    fn from(_outchar: &OutChar64) -> Self {
+//        String::new()
+//    }
+//}
+//
+//
+//impl From<&Candidates> for String {
+//    fn from(_candidates: &Candidates) -> Self {
+//        String::new()
+//    }
+//}
 
 
 pub fn generate_candidates(input: &String) -> Candidates {
