@@ -134,7 +134,7 @@ fetchAndInstantiate("./wasm_brr64.wasm", {})
     var output = document.getElementById("output");
 
     trigger = function(e) {
-      output.innerText = "egrep -a -b \"" + Sha1.digest(input.value) + '"';
+      output.innerText = "grep -PUzob \"" + Sha1.digest(input.value) + '"';
     }
     input.addEventListener("keyup", trigger);
     trigger();
