@@ -1,4 +1,5 @@
 mod symbolic_base_bro;
+mod convert;
 
 /*
  * This file is published under the CC0 licence.

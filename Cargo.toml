@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 regex = "1"
+structopt = "0.3"
 
 [lib]
 name = "wasm_brr64"

@@ -1,14 +1,14 @@
 //mod playgroud;
 //mod base64_encode;
+mod convert;
 mod symbolic_base_bro;
 
 use std::env;
-use std::io;
 
 
 fn main() {
-    let mut input = String::new();
-    let arg : String = env::args().nth(1).expect("Please provide string");
+    //let mut input = String::new();
+    let arg = env::args().nth(1).expect("Please provide string");
 
     let regex = String::from(&symbolic_base_bro::generate_candidates(&arg));
     println!("{}", regex);
