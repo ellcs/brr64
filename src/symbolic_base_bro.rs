@@ -1,7 +1,11 @@
-use regex::Regex;
-
+/// Classical base64 characters. You can find there everywhere on the internet.
 pub const BASE64_CHARS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+ 
+/// Representation of input characters for brr64
+///
+/// It's either symbolic or real. You can think of the classical padding, when reading symbolic.
+/// But it's not aquivalent. :)
 #[derive(Debug)]
 #[derive(PartialEq)]
 #[derive(Eq)]
@@ -11,6 +15,14 @@ pub enum InChar64 {
     Real(u32)
 }
 
+
+/// Representation of output characters for brr64
+///
+/// You may know the classical equal sign `=` from base64. It occurs when padding is added at the
+/// end. This is one case. The other option is, that you have a classical character, which is the
+/// `Single` case. The `Multiple` option is not known to base64. This happens when the source-byte
+/// was symbolic and not all informations were provided for this character. In that case all
+/// possible cases are provided within the `Multiple` case.
 #[derive(Debug)]
 #[derive(PartialEq)]
 #[derive(Eq)]
@@ -21,33 +33,23 @@ pub enum OutChar64 {
     Multiple(Vec<u8>)
 }
 
+
+/// brr64's internal representation of the 'plain-text' you're looking for.
+///
+/// There are three possible candidates for the text you're looking for:
+///   - The first candidate is the normal base64 case, with the padding known from base64. But
+///     instead of padding `\0`-bytes, we pad with the `InChar64::Sym` as symbolic value.
+///   - The second candidate is the result of base64, that had a symbolic byte (`InChar64::Sym`)
+///     prepended and than been padded, similar to the first case.
+///   - The thrid candidate is similar to the second, but has two symbolic bytes prepended and the
+///     the symbolic padding.
+///
+/// All padding at the end of the candidates is optional, as usual in base64.
 #[derive(Debug)]
 #[derive(PartialEq)]
 #[derive(Eq)]
 #[derive(Clone)]
 pub struct Candidates(pub Vec<OutChar64>, pub Vec<OutChar64>, pub Vec<OutChar64>);
-
-
-
-
-//impl From<&Candidates> for Regex {
-//    fn from(candidates: &Candidates) -> Self {
-//        Regex::new(&String::from(candidates)).unwrap()
-//    }
-//}
-//
-//impl From<&OutChar64> for String {
-//    fn from(_outchar: &OutChar64) -> Self {
-//        String::new()
-//    }
-//}
-//
-//
-//impl From<&Candidates> for String {
-//    fn from(_candidates: &Candidates) -> Self {
-//        String::new()
-//    }
-//}
 
 
 pub fn generate_candidates(input: &String) -> Candidates {
@@ -69,37 +71,38 @@ pub fn generate_candidates(input: &String) -> Candidates {
                 base64_three_chars_symbolic(three_chars, &mut out);
                 accu.append(&mut out.clone());
                 accu
-            })
+          })
     }).collect::<Vec<Vec<OutChar64>>>();
     Candidates(outputs[0].clone(), outputs[1].clone(), outputs[2].clone())
 }
 
 
-
-
-
-// ASCII-Art as PNG: 
-//
-//   https://web.archive.org/web/20210409165509/https://upload.wikimedia.org/wikipedia/commons/7/70/Base64-de.png
-//
-// +-------------------------------------------+
-// |                                           |
-// |            I        II        III         |
-// | ascii |876543_21|8765_4321|87_654321|     |
-// | b64   |654321|65_4321|6543_21|654321|     |
-// |          a       b       c      d         |
-// |                                           |
-// +-------------------------------------------+
-//
-//  Five cases exist:
-//
-//  1)  I, II and III are given   -> full knowledge of {a, b, c ,d}  partially: {}
-//  2)  II and III are given      -> full knowledge of {c, d}        partially: {b}
-//  3)  Only III is given         -> full knowledge of {d}           partially: {c}
-//  4)  Only I is given           -> full knowledge of {a}           partially: {b}
-//  5)  I and II are given        -> full knowledge of {a, b}        partially: {c}
-//  6)  Only II is given          -> full knowledge of {}            partially: {b,c}
-//  7)  None is given             -> full knowledge of {}            partially: {}
+/// Matches given three InChars64 (Symbolic or Real) to various cases and provides the pseudo
+/// base64 output for them.
+///
+/// There are seven cases documented for the three provided input characters.
+///   1.  I, II and III are given   -> full knowledge of {a, b, c ,d}  partially: {}
+///   2.  II and III are given      -> full knowledge of {c, d}        partially: {b}
+///   3.  Only III is given         -> full knowledge of {d}           partially: {c}
+///   4.  Only I is given           -> full knowledge of {a}           partially: {b}
+///   5.  I and II are given        -> full knowledge of {a, b}        partially: {c}
+///   6.  Only II is given          -> full knowledge of {}            partially: {b,c}
+///   7.  None is given             -> full knowledge of {}            partially: {}
+///
+/// Match the given roman numerals (I, II, III) and alphabetical characters (a,b,c,d):
+///
+/// ```
+///     +-------------------------------------------+
+///     |                                           |
+///     |            I        II        III         |
+///     | ascii |876543_21|8765_4321|87_654321|     |
+///     | b64   |654321|65_4321|6543_21|654321|     |
+///     |          a       b       c      d         |
+///     |                                           |
+///     +-------------------------------------------+
+///  ```
+///
+///   https://web.archive.org/web/20210409165509/https://upload.wikimedia.org/wikipedia/commons/7/70/Base64-de.png
 fn base64_three_chars_symbolic(chars: &[InChar64], result: &mut Vec<OutChar64>) {
     match chars {
         [InChar64::Real(c1), InChar64::Real(c2), InChar64::Real(c3)] => first_case(c1, c2, c3, result),
@@ -113,6 +116,7 @@ fn base64_three_chars_symbolic(chars: &[InChar64], result: &mut Vec<OutChar64>) 
     }
 }
 
+
 #[inline(always)]
 fn first_case(c1: &u32, c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (c1 << 16) | (c2 << 8) | c3 ;
@@ -122,12 +126,16 @@ fn first_case(c1: &u32, c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Single(BASE64_CHARS[(group24 & 0x3f) as usize]);
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |SSSSSS_SS|8765_4321|87_654321|     |
-// | b64   |XXXXXX|??_4321|6543_21|654321|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |SSSSSS_SS|8765_4321|87_654321|     |
+/// | b64   |XXXXXX|??_4321|6543_21|654321|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - symbolic
+/// X - not needed
+/// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn second_case(c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (0_u32 << 16) | (c2 << 8) | c3;
@@ -138,13 +146,17 @@ fn second_case(c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Single(BASE64_CHARS[(group24 & 0x3f) as usize]);
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |SSSSSS_SS|SSSS_SSSS|87_654321|     |
-// | b64   |XXXXXX|XX_XXXX|????_21|654321|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
-//#[inline(always)]
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |SSSSSS_SS|SSSS_SSSS|87_654321|     |
+/// | b64   |XXXXXX|XX_XXXX|????_21|654321|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - symbolic
+/// X - not needed
+/// ? - unknown; but partial information exists and we have to consider all possible options.
+#[inline(always)]
 fn third_case(c3: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (0_u32 << 16) | (0_u32 << 8) | c3;
     result[0] = OutChar64::Equals;
@@ -154,12 +166,16 @@ fn third_case(c3: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Single(BASE64_CHARS[(group24 & 0x3f) as usize]);
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |876543_21|SSSS_SSSS|SS_SSSSSS|     |
-// | b64   |654321|65_????|XXXX_XX|XXXXXX|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |876543_21|SSSS_SSSS|SS_SSSSSS|     |
+/// | b64   |654321|65_????|XXXX_XX|XXXXXX|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - symbolic
+/// X - not needed
+/// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn fourth_case(c3: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (c3 << 16) | (0_u32 << 8) | 0_u32;
@@ -170,12 +186,16 @@ fn fourth_case(c3: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Equals;        
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |876543_21|8765_4321|SS_SSSSSS|     |
-// | b64   |654321|65_4321|6543_??|XXXXXX|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |876543_21|8765_4321|SS_SSSSSS|     |
+/// | b64   |654321|65_4321|6543_??|XXXXXX|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - symbolic
+/// X - not needed
+/// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn fifth_case(c1: &u32, c2: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (c1 << 16) | (c2 << 8) | 0_u32;
@@ -186,12 +206,16 @@ fn fifth_case(c1: &u32, c2: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Equals;        
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |SSSSSS_SS|8765_4321|SS_SSSSSS|     |
-// | b64   |XXXXXX|??_4321|6543_??|XXXXXX|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |SSSSSS_SS|8765_4321|SS_SSSSSS|     |
+/// | b64   |XXXXXX|??_4321|6543_??|XXXXXX|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - symbolic
+/// X - not needed
+/// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn sixth_case(c2: &u32, result: &mut Vec<OutChar64>) {
     let group24: u32 = (0_u32 << 16) | (c2 << 8) | 0_u32;
@@ -203,12 +227,15 @@ fn sixth_case(c2: &u32, result: &mut Vec<OutChar64>) {
     result[3] = OutChar64::Equals;        
 }
 
-// +-------------------------------------------+
-// |            I        II        III         |
-// | ascii |SSSSSS_SS|SSSS_SSSS|SS_SSSSSS|     |
-// | b64   |XXXXXX|XX_XXXX|XXXX_XX|XXXXXX|     |
-// |          a       b       c      d         |
-// +-------------------------------------------+
+
+/// +-------------------------------------------+
+/// |            I        II        III         |
+/// | ascii |SSSSSS_SS|SSSS_SSSS|SS_SSSSSS|     |
+/// | b64   |XXXXXX|XX_XXXX|XXXX_XX|XXXXXX|     |
+/// |          a       b       c      d         |
+/// +-------------------------------------------+
+/// S - Symbolic
+/// X - Not needed
 #[inline(always)]
 fn seventh_case(result: &mut Vec<OutChar64>) {
     result[0] = OutChar64::Equals;        
