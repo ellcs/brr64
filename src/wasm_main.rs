@@ -1,7 +1,3 @@
-mod symbolic_base_bro;
-mod convert;
-mod args;
-
 /*
  * This file is published under the CC0 licence.
  *
@@ -11,6 +7,10 @@ mod args;
  *
  *      https://www.hellorust.com/demos/sha1/index.html
  */
+mod symbolic_base_bro;
+mod convert;
+mod args;
+use structopt::StructOpt;
 
 use std::mem;
 use std::ffi::{CString, CStr};
@@ -40,14 +40,14 @@ pub extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
 #[no_mangle]
 pub extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
     unsafe {
-        let data = CStr::from_ptr(data).to_string_lossy().into_owned();
         // print everything and remove them in javascript, because handling those options via.
         // rust-javascript ffi is too much work.
         let options = args::Options { 
             match_newlines: true, 
-            print_equals:  true
+            print_equals:  false,
+            input: CStr::from_ptr(data).to_string_lossy().into_owned()
         };
-        let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&data), &options);
+        let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
         let s = CString::new(out).unwrap();
         s.into_raw()
     }

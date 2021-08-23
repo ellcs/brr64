@@ -23,7 +23,7 @@ pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &args::Options) 
             OutChar64::Single(byte) => {
                 out.push(*byte as char);
                 if options.match_newlines {
-                    out.push_str("\n?");
+                    out.push_str("\\n?");
                 }
             },
             OutChar64::Multiple(bytes) => {
@@ -36,7 +36,7 @@ pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &args::Options) 
                 });
                 out.push(')');
                 if options.match_newlines {
-                    out.push_str("\n?");
+                    out.push_str("\\n?");
                 }
             },
             OutChar64::Equals => { 
@@ -52,9 +52,12 @@ pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &args::Options) 
 #[test]
 fn test_generate_candidates_regex_empty() {
     // input
-    let input = &String::from("");
-    let options = args::Options { match_newlines: false, print_equals: false };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
+    let options = args::Options { 
+        match_newlines: false, 
+        print_equals: false,
+        input: String::from("")
+    };
+    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let output = "(||)";
     assert_eq!(output, result);
@@ -63,9 +66,12 @@ fn test_generate_candidates_regex_empty() {
 #[test]
 fn test_generate_candidates_regex_empty_with_equals() {
     // input
-    let input = &String::from("");
-    let options = args::Options { match_newlines: false, print_equals: true };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
+    let options = args::Options { 
+        match_newlines: false, 
+        print_equals: true ,
+        input: String::from("")
+    };
+    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let output = "(|====|====)";
     assert_eq!(output, result);
@@ -74,9 +80,12 @@ fn test_generate_candidates_regex_empty_with_equals() {
 #[test]
 fn test_generate_candidates_regex_simple_a() {
     // input
-    let input = &String::from("A");
-    let options = args::Options { match_newlines: false, print_equals: false };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
+    let options = args::Options { 
+        match_newlines: false, 
+        print_equals: false ,
+        input: String::from("A")
+    };
+    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)";
     let second = "(E|U|k|0)(E|F|G|H)";
@@ -88,9 +97,12 @@ fn test_generate_candidates_regex_simple_a() {
 #[test]
 fn test_generate_candidates_regex_simple_a_with_newlines() {
     // input
-    let input = &String::from("A");
-    let options = args::Options { match_newlines: true, print_equals: false };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
+    let options = args::Options { 
+        match_newlines: true, 
+        print_equals: false,
+        input: String::from("A") 
+    };
+    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)\n?";
     let second = "(E|U|k|0)\n?(E|F|G|H)\n?";
@@ -104,9 +116,12 @@ fn test_generate_candidates_regex_simple_a_with_newlines() {
 #[test]
 fn test_generate_candidates_regex_simple_a_with_equals() {
     // input
-    let input = &String::from("A");
-    let options = args::Options { match_newlines: false, print_equals: true };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
+    let options = args::Options { 
+        match_newlines: false, 
+        print_equals: true, 
+        input: String::from("A") 
+    };
+    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)==";
     let second = "=(E|U|k|0)(E|F|G|H)=";

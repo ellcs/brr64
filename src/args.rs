@@ -15,5 +15,11 @@ pub struct Options {
     /// You will also have equal-characters at the beginning of the candidates. It's not
     /// recommended to have this option turned on when searching.
     #[structopt(short, long)]
-    pub print_equals: bool
+    pub print_equals: bool,
+
+    /// Provided input text to brr64
+    #[structopt()]
+    pub input: String
+
+
 }
