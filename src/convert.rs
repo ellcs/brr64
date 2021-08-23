@@ -104,9 +104,9 @@ fn test_generate_candidates_regex_simple_a_with_newlines() {
     };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
-    let first = "Q\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)\n?";
-    let second = "(E|U|k|0)\n?(E|F|G|H)\n?";
-    let third = "(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)\n?B\n?";
+    let first = "Q\\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)\\n?";
+    let second = "(E|U|k|0)\\n?(E|F|G|H)\\n?";
+    let third = "(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)\\n?B\\n?";
     let output = format!("({}|{}|{})", first, second, third);
     assert_eq!(output, result);
 }
