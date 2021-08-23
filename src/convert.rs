@@ -1,28 +1,10 @@
+use crate::args;
 use crate::symbolic_base_bro;
 use crate::symbolic_base_bro::*;
-use structopt::StructOpt;
-use regex::Regex;
-
-#[derive(StructOpt, Debug)]
-#[structopt(name = "basic")]
-pub struct Options {
-
-    /// The base64 encoded string, you are looking for, might contain a newline. If you want to
-    /// avoid the newline search, set this value to true. It's recommended to keep it on true,
-    /// except for educational purposes.
-    #[structopt(short, long)]
-    pub match_newlines: bool,
-
-    /// Usually, when base64 encoding a string which is not three characters long, you will find
-    /// padding at the end of the string, which is indicated as equal signs at the end. Caution:
-    /// You will also have equal-characters at the beginning of the candidates. It's not
-    /// recommended to have this option turned on when searching.
-    #[structopt(short, long)]
-    pub print_equals: bool
-}
+//use regex::Regex;
 
 
-pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options: &Options) -> String {
+pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options: &args::Options) -> String {
         let mut out = String::new();
         out.push('(');
         let symbolic_base_bro::Candidates(first, second, third) = candidates;
@@ -34,7 +16,7 @@ pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options:
         out
 }
 
-pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &Options) -> String {
+pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &args::Options) -> String {
     candidate.iter().map(|outchar| {
         let mut out = String::new();
         match outchar {
@@ -71,7 +53,7 @@ pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &Options) -> Str
 fn test_generate_candidates_regex_empty() {
     // input
     let input = &String::from("");
-    let options = Options { match_newlines: false, print_equals: false };
+    let options = args::Options { match_newlines: false, print_equals: false };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
     // output
     let output = "(||)";
@@ -82,7 +64,7 @@ fn test_generate_candidates_regex_empty() {
 fn test_generate_candidates_regex_empty_with_equals() {
     // input
     let input = &String::from("");
-    let options = Options { match_newlines: false, print_equals: true };
+    let options = args::Options { match_newlines: false, print_equals: true };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
     // output
     let output = "(|====|====)";
@@ -93,7 +75,7 @@ fn test_generate_candidates_regex_empty_with_equals() {
 fn test_generate_candidates_regex_simple_a() {
     // input
     let input = &String::from("A");
-    let options = Options { match_newlines: false, print_equals: false };
+    let options = args::Options { match_newlines: false, print_equals: false };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
     // output
     let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)";
@@ -107,7 +89,7 @@ fn test_generate_candidates_regex_simple_a() {
 fn test_generate_candidates_regex_simple_a_with_newlines() {
     // input
     let input = &String::from("A");
-    let options = Options { match_newlines: true, print_equals: false };
+    let options = args::Options { match_newlines: true, print_equals: false };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
     // output
     let first = "Q\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)\n?";
@@ -123,11 +105,11 @@ fn test_generate_candidates_regex_simple_a_with_newlines() {
 fn test_generate_candidates_regex_simple_a_with_equals() {
     // input
     let input = &String::from("A");
-    let options = Options { match_newlines: false, print_equals: true };
+    let options = args::Options { match_newlines: false, print_equals: true };
     let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&input), &options);
     // output
-    let first = "Q\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)==";
-    let second = "=\n?(E|U|k|0)(E|F|G|H)=";
+    let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)==";
+    let second = "=(E|U|k|0)(E|F|G|H)=";
     let third = "==(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)B";
     let output = format!("({}|{}|{})", first, second, third);
     assert_eq!(output, result);

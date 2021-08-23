@@ -1,6 +1,7 @@
 //mod playgroud;
 //mod base64_encode;
 mod convert;
+mod args;
 mod symbolic_base_bro;
 
 use std::env;
@@ -10,7 +11,7 @@ fn main() {
     //let mut input = String::new();
     let arg = env::args().nth(1).expect("Please provide string");
 
-    let options = convert::Options { 
+    let options = args::Options { 
         match_newlines: true, 
         print_equals: false 
     };

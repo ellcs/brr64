@@ -1,5 +1,6 @@
 mod symbolic_base_bro;
 mod convert;
+mod args;
 
 /*
  * This file is published under the CC0 licence.
@@ -42,7 +43,7 @@ pub extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
         let data = CStr::from_ptr(data).to_string_lossy().into_owned();
         // print everything and remove them in javascript, because handling those options via.
         // rust-javascript ffi is too much work.
-        let options = convert::Options { 
+        let options = args::Options { 
             match_newlines: true, 
             print_equals:  true
         };
