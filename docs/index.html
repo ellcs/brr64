@@ -25,7 +25,8 @@
 	<div class="w3-container w3-padding-large">
 		<label class="w3-text"><b>Generated Regex for grep:</b> <button id="copy">copy</button></label>
 		<textarea class="w3-input w3-border" style="font-family: monospace" type="text" id="output">Provide input...</textarea>
-		<label class="w3-text"><small>Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. </small></label>
+		<label class="w3-text"><small>Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. Base64 content might contain newlines between characters. This is why you might see the optional newline match (<code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"\n?"</code>) quite often.</small></label>
+
 	</div>
 	
 
