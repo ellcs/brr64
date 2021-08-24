@@ -1,7 +1,6 @@
 use crate::args;
 use crate::symbolic_base_bro;
 use crate::symbolic_base_bro::*;
-//use regex::Regex;
 
 
 pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options: &args::Options) -> String {

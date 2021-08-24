@@ -138,7 +138,8 @@ fn first_case(c1: &u32, c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
 /// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn second_case(c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
-    let group24: u32 = (0_u32 << 16) | (c2 << 8) | c3;
+    // (0_u32 << 16) | (c2 << 8) | c3;
+    let group24: u32 = (c2 << 8) | c3;
     result[0] = OutChar64::Equals;
     let partial = ((group24 >> 12) & 0b001111) as usize; 
     result[1] = OutChar64::Multiple((0..4).map(|n| BASE64_CHARS[partial + (n * 16)]).collect::<Vec<u8>>()); // mult
@@ -158,7 +159,8 @@ fn second_case(c2: &u32, c3: &u32, result: &mut Vec<OutChar64>) {
 /// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn third_case(c3: &u32, result: &mut Vec<OutChar64>) {
-    let group24: u32 = (0_u32 << 16) | (0_u32 << 8) | c3;
+    // (0_u32 << 16) | (0_u32 << 8) | c3;
+    let group24 = c3;
     result[0] = OutChar64::Equals;
     result[1] = OutChar64::Equals;
     let partial = ((group24 >> 6) & 0b000011) as usize; 
@@ -178,7 +180,8 @@ fn third_case(c3: &u32, result: &mut Vec<OutChar64>) {
 /// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn fourth_case(c3: &u32, result: &mut Vec<OutChar64>) {
-    let group24: u32 = (c3 << 16) | (0_u32 << 8) | 0_u32;
+    // (c3 << 16) | (0_u32 << 8) | 0_u32;
+    let group24: u32 = c3 << 16;
     result[0] = OutChar64::Single(BASE64_CHARS[((group24 >> 18) & 0x3f) as usize]);
     let partial = ((group24 >> 12) & 0b110000) as usize; 
     result[1] = OutChar64::Multiple((0..16).map(|n| BASE64_CHARS[partial | n]).collect::<Vec<u8>>()); // mult
@@ -198,7 +201,8 @@ fn fourth_case(c3: &u32, result: &mut Vec<OutChar64>) {
 /// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn fifth_case(c1: &u32, c2: &u32, result: &mut Vec<OutChar64>) {
-    let group24: u32 = (c1 << 16) | (c2 << 8) | 0_u32;
+    // (c1 << 16) | (c2 << 8) | 0_u32;
+    let group24: u32 = (c1 << 16) | (c2 << 8);
     result[0] = OutChar64::Single(BASE64_CHARS[((group24 >> 18) & 0x3f) as usize]);
     result[1] = OutChar64::Single(BASE64_CHARS[((group24 >> 12) & 0x3f) as usize]);
     let partial = ((group24 >> 6) & 0b111100) as usize; 
@@ -218,7 +222,8 @@ fn fifth_case(c1: &u32, c2: &u32, result: &mut Vec<OutChar64>) {
 /// ? - unknown; but partial information exists and we have to consider all possible options.
 #[inline(always)]
 fn sixth_case(c2: &u32, result: &mut Vec<OutChar64>) {
-    let group24: u32 = (0_u32 << 16) | (c2 << 8) | 0_u32;
+    // (0_u32 << 16) | (c2 << 8) | 0_u32;
+     let group24: u32 = c2 << 8;
     result[0] = OutChar64::Equals;        
     let partial = ((group24 >> 12) & 0b001111) as usize; 
     result[1] = OutChar64::Multiple((0..4).map(|n| BASE64_CHARS[partial + (n * 16)]).collect::<Vec<u8>>()); // mult
