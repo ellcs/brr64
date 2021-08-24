@@ -25,9 +25,9 @@ jobs:
     - name: Build wasm file for `docs`
       run: cargo build --target wasm32-unknown-unknown
     - name: Move compiled wasm32 file into `docs`
-      run: 
-        mv target/wasm32-unknown-unknown/debug/wasm_brr64.wasm docs/ |
-        sed -i /COMMIT_HASH/"${{ steps.vars.outputs.sha_short }}"/ index.html
+      run: |
+        mv target/wasm32-unknown-unknown/debug/wasm_brr64.wasm docs/
+        sed -i "s/COMMIT_HASH/$(git rev-parse --short HEAD)/" docs/index.html
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
