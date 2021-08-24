@@ -52,7 +52,7 @@ pub enum OutChar64 {
 pub struct Candidates(pub Vec<OutChar64>, pub Vec<OutChar64>, pub Vec<OutChar64>);
 
 
-pub fn generate_candidates(input: &String) -> Candidates {
+pub fn generate_candidates(input: &str) -> Candidates {
     let mut input0: Vec<InChar64> = input.bytes().map(|b| { InChar64::Real(b as u32)}).collect();
     let mut input1: Vec<InChar64> = input0.clone();
     let mut input2: Vec<InChar64> = input0.clone();

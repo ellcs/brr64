@@ -3,7 +3,6 @@ mod args;
 mod symbolic_base_bro;
 
 use structopt::StructOpt;
-use std::env;
 
 
 fn main() {

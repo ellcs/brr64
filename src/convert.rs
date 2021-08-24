@@ -15,7 +15,7 @@ pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options:
         out
 }
 
-pub fn string_by_candidate(candidate: &Vec<OutChar64>, options: &args::Options) -> String {
+pub fn string_by_candidate(candidate: &[OutChar64], options: &args::Options) -> String {
     candidate.iter().map(|outchar| {
         let mut out = String::new();
         match outchar {

@@ -10,7 +10,6 @@
 mod symbolic_base_bro;
 mod convert;
 mod args;
-use structopt::StructOpt;
 
 use std::mem;
 use std::ffi::{CString, CStr};
@@ -27,10 +26,8 @@ pub extern "C" fn alloc(size: usize) -> *mut c_void {
 }
 
 #[no_mangle]
-pub extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
-    unsafe  {
-        let _buf = Vec::from_raw_parts(ptr, 0, cap);
-    }
+pub unsafe extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
+    let _buf = Vec::from_raw_parts(ptr, 0, cap);
 }
 
 // The JavaScript side passes a pointer to a C-like string that's already placed into memory.
@@ -38,25 +35,21 @@ pub extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
 // and then turn it back into an memory-allocated C-like string.
 // A pointer to this data is returned.
 #[no_mangle]
-pub extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
-    unsafe {
-        // print everything and remove them in javascript, because handling those options via.
-        // rust-javascript ffi is too much work.
-        let options = args::Options { 
-            match_newlines: true, 
-            print_equals:  false,
-            input: CStr::from_ptr(data).to_string_lossy().into_owned()
-        };
-        let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
-        let s = CString::new(out).unwrap();
-        s.into_raw()
-    }
+pub unsafe extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
+    // print everything and remove them in javascript, because handling those options via.
+    // rust-javascript ffi is too much work.
+    let options = args::Options { 
+        match_newlines: true, 
+        print_equals:  false,
+        input: CStr::from_ptr(data).to_string_lossy().into_owned()
+    };
+    let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let s = CString::new(out).unwrap();
+    s.into_raw()
 }
 
 #[no_mangle]
-pub extern "C" fn dealloc_str(ptr: *mut c_char) {
-    unsafe {
-        let _ = CString::from_raw(ptr);
-    }
+pub unsafe extern "C" fn dealloc_str(ptr: *mut c_char) {
+    let _ = CString::from_raw(ptr);
 }
 
