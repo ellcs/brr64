@@ -1,0 +1,139 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+  <title>brr64 - base64 flat grepper</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<div class="w3-content w3-padding-large w3-margin-top">
+	<div class="w3-container w3-padding-large">
+	<h1>brr64 - base64 flat grepper</h3>
+	Have you ever looked for base64 encoded content in multiple, huge files? The issue is: You can not filter all possible base64 characters and decode them, in the hope of finding the needle. brr64 generates a regular expression which contains all possibilities of the total base64 encoded content. No false-positives or true-negatives. This allows you to search in a flat-file manner, without decoding base64 at all.
+	</div>
+
+
+	<div class="w3-container w3-padding-large">
+	  	<label class="w3-text"><b>Generate a flat base64 grepper:</b></label>
+		<textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Provide the plaintext you want to search..."></textarea>
+		<label class="w3-text"><small>Works with Unicode, newline, carriage return and basically everything. Something does not work? Open an <a href="https://github.com/ellcs/brr64/issues">issue</a>.</small></label>
+	</div>
+
+	
+	<div class="w3-container w3-padding-large">
+		<label class="w3-text"><b>Generated Regex for grep:</b> <button id="copy">copy</button></label>
+		<textarea class="w3-input w3-border" style="font-family: monospace" type="text" id="output">Provide input...</textarea>
+		<label class="w3-text"><small>Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. Base64 content might contain newlines between characters. This is why you might see the optional newline match (<code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"\n?"</code>) quite often.</small></label>
+
+	</div>
+	
+
+	<div class="w3-container w3-padding-large" style=" position: fixed; bottom: 0;">
+	<footer class="w3-display-container w3-content ">
+		Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a></br></br>
+	</footer>
+</div>
+<script>
+function copy() {
+  var copyText = document.querySelector("#output");
+  copyText.select();
+  document.execCommand("copy");
+}
+
+document.querySelector("#copy").addEventListener("click", copy);
+
+
+function fetchAndInstantiate(url, importObject) {
+  return fetch(url).then(response =>
+    response.arrayBuffer()
+  ).then(bytes =>
+    WebAssembly.instantiate(bytes, importObject)
+  ).then(results =>
+    results.instance
+  );
+}
+
+// Copy a nul-terminated string from the buffer pointed to.
+// Consumes the old data and thus deallocated it.
+function copyCStr(module, ptr) {
+  let orig_ptr = ptr;
+  const collectCString = function* () {
+    let memory = new Uint8Array(module.memory.buffer);
+    while (memory[ptr] !== 0) {
+      if (memory[ptr] === undefined) { throw new Error("Tried to read undef mem") }
+      yield memory[ptr]
+      ptr += 1
+    }
+  }
+
+  const buffer_as_u8 = new Uint8Array(collectCString())
+  const utf8Decoder = new TextDecoder("UTF-8");
+  const buffer_as_utf8 = utf8Decoder.decode(buffer_as_u8);
+  module.dealloc_str(orig_ptr);
+  return buffer_as_utf8
+}
+
+function getStr(module, ptr, len) {
+  const getData = function* (ptr, len) {
+    let memory = new Uint8Array(module.memory.buffer);
+    for (let index = 0; index < len; index++) {
+      if (memory[ptr] === undefined) { throw new Error(`Tried to read undef mem at ${ptr}`) }
+      yield memory[ptr + index]
+    }
+  }
+
+  const buffer_as_u8 = new Uint8Array(getData(ptr/8, len/8));
+  const utf8Decoder = new TextDecoder("UTF-8");
+  const buffer_as_utf8 = utf8Decoder.decode(buffer_as_u8);
+  return buffer_as_utf8;
+}
+
+function newString(module, str) {
+  const utf8Encoder = new TextEncoder("UTF-8");
+  let string_buffer = utf8Encoder.encode(str)
+  let len = string_buffer.length
+  let ptr = module.alloc(len+1)
+
+  let memory = new Uint8Array(module.memory.buffer);
+  for (i = 0; i < len; i++) {
+    memory[ptr+i] = string_buffer[i]
+  }
+
+  memory[ptr+len] = 0;
+
+  return ptr;
+}
+
+window.Module = {}
+var Sha1 = {
+  digest: function(str) {
+    let buf = newString(Module, str);
+    let outptr = Module.digest(buf);
+    let result = copyCStr(Module, outptr);
+    Module.dealloc_str(buf);
+    return result;
+  }
+}
+
+fetchAndInstantiate("./wasm_brr64.wasm", {})
+  .then(mod => {
+    Module.alloc   = mod.exports.alloc;
+    Module.dealloc = mod.exports.dealloc;
+    Module.dealloc_str = mod.exports.dealloc_str;
+    Module.digest  = mod.exports.candidates;
+    Module.memory  = mod.exports.memory;
+
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+
+    trigger = function(e) {
+      output.innerText = "grep -PUzob \"" + Sha1.digest(input.value) + '"';
+    }
+    input.addEventListener("keyup", trigger);
+    trigger();
+  });
+</script>
+</body>
+</html>
