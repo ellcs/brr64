@@ -20,3 +20,12 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Build wasm file for `public`
+      run: cargo build --target wasm32-unknown-unknown
+    - name: Move compiled wasm32 file into `public`
+      run: mv target/wasm32-unknown-unknown/debug/wasm_brr64.wasm public/
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
