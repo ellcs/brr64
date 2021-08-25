@@ -27,7 +27,7 @@ jobs:
     - name: Move compiled wasm32 file into `docs`
       run: |
         mv target/wasm32-unknown-unknown/release/wasm_brr64.wasm docs/
-        sed -i "s/COMMIT_HASH/$(git rev-parse --short HEAD)/" docs/index.html
+        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" docs/index.html
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
