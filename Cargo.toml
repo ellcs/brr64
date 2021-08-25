@@ -12,12 +12,3 @@ members = ["brr64-wasm"]
 [dependencies]
 regex = "1"
 structopt = "0.3"
-
-#[lib]
-#name = "wasm_brr64"
-#crate-type = ["cdylib"]
-#path = "src/wasm_main.rs"
-
-[[bin]]
-name = "brr64"
-path = "src/main.rs"
