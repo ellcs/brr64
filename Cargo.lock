@@ -44,6 +44,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "brr64-wasm"
+version = "0.1.0"
+dependencies = [
+ "brr64",
+]
+
+[[package]]
 name = "clap"
 version = "2.33.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

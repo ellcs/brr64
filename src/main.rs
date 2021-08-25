@@ -1,6 +1,7 @@
-mod convert;
-mod args;
-mod symbolic_base_bro;
+//mod convert;
+use brr64::args;
+use brr64::symbolic_base_bro;
+use brr64::convert;
 
 use structopt::StructOpt;
 

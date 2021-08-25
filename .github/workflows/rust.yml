@@ -23,7 +23,7 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Build wasm file for `docs`
-      run: cargo build --target wasm32-unknown-unknown --release
+      run: cargo build -p brr64-wasm --target wasm32-unknown-unknown --release
     - name: Move compiled wasm32 file into `docs`
       run: |
         mv target/wasm32-unknown-unknown/release/wasm_brr64.wasm docs/
