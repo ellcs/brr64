@@ -43,7 +43,8 @@ pub unsafe extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
         print_equals:  false,
         input: CStr::from_ptr(data).to_string_lossy().into_owned()
     };
-    let out = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let candidates = symbolic_base_bro::generate_candidates(&options.input);
+    let out = convert::regex_string_by_candidates(&candidates, &options);
     let s = CString::new(out).unwrap();
     s.into_raw()
 }

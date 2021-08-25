@@ -8,6 +8,7 @@ use structopt::StructOpt;
 fn main() {
     let options = args::Options::from_args();
 
-    let regex = convert::string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let candidates = symbolic_base_bro::generate_candidates(&options.input);
+    let regex = convert::regex_string_by_candidates(&candidates, &options);
     println!("{}", regex);
 }

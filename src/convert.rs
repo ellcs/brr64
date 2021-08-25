@@ -3,19 +3,19 @@ use crate::symbolic_base_bro;
 use crate::symbolic_base_bro::*;
 
 
-pub fn string_by_candidates(candidates: &symbolic_base_bro::Candidates, options: &args::Options) -> String {
+pub fn regex_string_by_candidates(candidates: &symbolic_base_bro::Candidates, options: &args::Options) -> String {
         let mut out = String::new();
         out.push('(');
         let symbolic_base_bro::Candidates(first, second, third) = candidates;
         let str_candidates = vec![first, second, third].into_iter().map(|candidate| {
-            string_by_candidate(candidate, options)
+            regex_string_by_candidate(candidate, options)
         }).collect::<Vec<String>>().join("|");
         out.push_str(&str_candidates);
         out.push(')');
         out
 }
 
-pub fn string_by_candidate(candidate: &[OutChar64], options: &args::Options) -> String {
+pub fn regex_string_by_candidate(candidate: &[OutChar64], options: &args::Options) -> String {
     candidate.iter().map(|outchar| {
         let mut out = String::new();
         match outchar {
@@ -56,7 +56,7 @@ fn test_generate_candidates_regex_empty() {
         print_equals: false,
         input: String::from("")
     };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let result = regex_string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let output = "(||)";
     assert_eq!(output, result);
@@ -70,7 +70,7 @@ fn test_generate_candidates_regex_empty_with_equals() {
         print_equals: true ,
         input: String::from("")
     };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let result = regex_string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let output = "(|====|====)";
     assert_eq!(output, result);
@@ -84,7 +84,7 @@ fn test_generate_candidates_regex_simple_a() {
         print_equals: false ,
         input: String::from("A")
     };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let result = regex_string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)";
     let second = "(E|U|k|0)(E|F|G|H)";
@@ -101,7 +101,7 @@ fn test_generate_candidates_regex_simple_a_with_newlines() {
         print_equals: false,
         input: String::from("A") 
     };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let result = regex_string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q\\n?(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)\\n?";
     let second = "(E|U|k|0)\\n?(E|F|G|H)\\n?";
@@ -120,7 +120,7 @@ fn test_generate_candidates_regex_simple_a_with_equals() {
         print_equals: true, 
         input: String::from("A") 
     };
-    let result = string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
+    let result = regex_string_by_candidates(&symbolic_base_bro::generate_candidates(&options.input), &options);
     // output
     let first = "Q(Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f)==";
     let second = "=(E|U|k|0)(E|F|G|H)=";
