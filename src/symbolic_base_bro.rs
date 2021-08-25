@@ -91,16 +91,14 @@ pub fn generate_candidates(input: &str) -> Candidates {
 ///
 /// Match the given roman numerals (I, II, III) and alphabetical characters (a,b,c,d):
 ///
-/// ```
-///     +-------------------------------------------+
-///     |                                           |
-///     |            I        II        III         |
-///     | ascii |876543_21|8765_4321|87_654321|     |
-///     | b64   |654321|65_4321|6543_21|654321|     |
-///     |          a       b       c      d         |
-///     |                                           |
-///     +-------------------------------------------+
-///  ```
+///  +-------------------------------------------+
+///  |                                           |
+///  |            I        II        III         |
+///  | ascii |876543_21|8765_4321|87_654321|     |
+///  | b64   |654321|65_4321|6543_21|654321|     |
+///  |          a       b       c      d         |
+///  |                                           |
+///  +-------------------------------------------+
 ///
 ///   https://web.archive.org/web/20210409165509/https://upload.wikimedia.org/wikipedia/commons/7/70/Base64-de.png
 fn base64_three_chars_symbolic(chars: &[InChar64], result: &mut Vec<OutChar64>) {
