@@ -39,7 +39,7 @@ pub unsafe extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
     // print everything and remove them in javascript, because handling those options via.
     // rust-javascript ffi is too much work.
     let options = args::Options { 
-        match_newlines: false, 
+        match_newlines: true, 
         print_equals:  false,
         input: CStr::from_ptr(data).to_string_lossy().into_owned()
     };
