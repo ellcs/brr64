@@ -253,7 +253,11 @@ fn base64_three_chars_symbolic_first_case() {
     let array = [InChar64::Real(0), InChar64::Real(1), InChar64::Real(3)];
     let mut output: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
     base64_three_chars_symbolic(&array, &mut output);
-    assert_eq!(output, vec![OutChar64::Single(65), OutChar64::Single(65), OutChar64::Single(69), OutChar64::Single(68)]);
+    let expected = vec![OutChar64::Single(65), 
+                        OutChar64::Single(65), 
+                        OutChar64::Single(69), 
+                        OutChar64::Single(68)];
+    assert_eq!(output, expected);
 }
 
 #[test]
@@ -261,7 +265,11 @@ fn base64_three_chars_symbolic_second_case() {
     let array = [InChar64::Sym, InChar64::Real(1), InChar64::Real(3)];
     let mut output: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
     base64_three_chars_symbolic(&array, &mut output);
-    assert_eq!(output, vec![OutChar64::Equals, OutChar64::Multiple(vec![65, 81, 103, 119]), OutChar64::Single(69), OutChar64::Single(68)]);
+    let expected = vec![OutChar64::Equals, 
+                        OutChar64::Multiple(vec![65, 81, 103, 119]), 
+                        OutChar64::Single(69), 
+                        OutChar64::Single(68)];
+    assert_eq!(output, expected);
 }
 
 #[test]
@@ -269,7 +277,11 @@ fn base64_three_chars_symbolic_third_case() {
     let array = [InChar64::Sym, InChar64::Sym, InChar64::Real(3)];
     let mut output: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
     base64_three_chars_symbolic(&array, &mut output);
-    assert_eq!(output, vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Multiple(vec![65, 69, 73, 77, 81, 85, 89, 99, 103, 107, 111, 115, 119, 48, 52, 56]), OutChar64::Single(68)]);
+    let expected = vec![OutChar64::Equals, 
+                        OutChar64::Equals, 
+                        OutChar64::Multiple(vec![65, 69, 73, 77, 81, 85, 89, 99, 103, 107, 111, 115, 119, 48, 52, 56]), 
+                        OutChar64::Single(68)];
+    assert_eq!(output, expected);
 }
 
 #[test]
@@ -277,7 +289,11 @@ fn base64_three_chars_symbolic_fourth_case() {
     let array = [InChar64::Real(0), InChar64::Sym, InChar64::Sym];
     let mut output: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
     base64_three_chars_symbolic(&array, &mut output);
-    assert_eq!(output, vec![OutChar64::Single(65), OutChar64::Multiple(vec![65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]), OutChar64::Equals, OutChar64::Equals]);
+    let expected = vec![OutChar64::Single(65), 
+                        OutChar64::Multiple(vec![65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]), 
+                        OutChar64::Equals, 
+                        OutChar64::Equals];
+    assert_eq!(output, expected);
 }
 
 #[test]
@@ -285,6 +301,10 @@ fn base64_three_chars_symbolic_fifth_case() {
     let array = [InChar64::Real(0), InChar64::Real(1), InChar64::Sym];
     let mut output: Vec<OutChar64> = vec![OutChar64::Equals, OutChar64::Equals, OutChar64::Equals, OutChar64::Equals];
     base64_three_chars_symbolic(&array, &mut output);
-    assert_eq!(output, vec![OutChar64::Single(65), OutChar64::Single(65), OutChar64::Multiple(vec![69, 70, 71, 72]), OutChar64::Equals]);
+    let expected = vec![OutChar64::Single(65), 
+                        OutChar64::Single(65), 
+                        OutChar64::Multiple(vec![69, 70, 71, 72]), 
+                        OutChar64::Equals];
+    assert_eq!(output, expected);
 }
 
