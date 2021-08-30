@@ -1,8 +1,11 @@
 [package]
 name = "brr64"
 version = "0.1.0"
+description = "Find base64 encoded content without decoding."
+repository = "https://github.com/ellcs/brr64"
 authors = ["ellcs"]
 edition = "2018"
+license = "MIT and CC0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
