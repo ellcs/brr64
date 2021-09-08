@@ -24,6 +24,10 @@ jobs:
       run: cargo test --verbose
     - name: Build wasm file for `docs`
       run: cargo build -p brr64-wasm --target wasm32-unknown-unknown --release
+    - name: Reduce size of generated wasm
+      run: |
+        cargo install wasm-gc
+        wasm-gc target target/wasm32-unknown-unknown/release/wasm_brr64.wasm
     - name: Move compiled wasm32 file into `docs`
       run: |
         mv target/wasm32-unknown-unknown/release/wasm_brr64.wasm docs/
