@@ -18,11 +18,11 @@ pub struct Options {
     #[structopt(short = "p", long)]
     pub print_regex: bool,
 
-    // following field have to be set manually, because `structopt` can't set them.
+    // following field has to be set manually, because `structopt` can't set them.
     #[structopt(skip)]
     pub stdin_tty: bool,
 
-    // following field have to be set manually, because `structopt` can't set them.
+    // following field has to be set manually, because `structopt` can't set them.
     #[structopt(skip)]
     pub stdout_tty: bool,
 
