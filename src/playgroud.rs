@@ -111,6 +111,11 @@ fn test_overflows() {
     fooadd(&a, &b);
 }
 
+#[test]
+fn test_modulo() {
+    assert_eq!(1_i8, (-1_i8).rem_euclid(2_i8));
+}
+
 
 #[test]
 fn test_cycle() {
