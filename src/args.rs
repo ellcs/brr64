@@ -11,7 +11,7 @@ pub struct Options {
 
     /// Specifies which stream is used to search for the encoded search term.
     //#[structopt(short = "f", long, default_value = "-")]
-    #[structopt(short = "f", long, parse(from_os_str), default_value = "-")]
+    #[structopt(short = "i", long, parse(from_os_str), default_value = "-")]
     pub input_file: PathBuf,
 
     /// Prints a regular expression which can be used for grep. 
