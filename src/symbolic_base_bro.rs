@@ -81,13 +81,13 @@ pub fn generate_candidates(input: &str) -> Candidates {
 /// base64 output for them.
 ///
 /// There are seven cases documented for the three provided input characters.
-///   1.  I, II and III are given   -> full knowledge of {a, b, c ,d}  partially: {}
-///   2.  II and III are given      -> full knowledge of {c, d}        partially: {b}
-///   3.  Only III is given         -> full knowledge of {d}           partially: {c}
-///   4.  Only I is given           -> full knowledge of {a}           partially: {b}
-///   5.  I and II are given        -> full knowledge of {a, b}        partially: {c}
-///   6.  Only II is given          -> full knowledge of {}            partially: {b,c}
-///   7.  None is given             -> full knowledge of {}            partially: {}
+///   1.  I, II and III are given   which mean we have full knowledge of {a, b, c ,d}  and partial knowledge of: {}
+///   2.  II and III are given      which mean we have full knowledge of {c, d}        and partial knowledge of: {b}
+///   3.  Only III is given         which mean we have full knowledge of {d}           and partial knowledge of: {c}
+///   4.  Only I is given           which mean we have full knowledge of {a}           and partial knowledge of: {b}
+///   5.  I and II are given        which mean we have full knowledge of {a, b}        and partial knowledge of: {c}
+///   6.  Only II is given          which mean we have full knowledge of {}            and partial knowledge of: {b,c}
+///   7.  None is given             which mean we have full knowledge of {}            and partial knowledge of: {}
 ///
 /// Match the given roman numerals (I, II, III) and alphabetical characters (a,b,c,d):
 ///
