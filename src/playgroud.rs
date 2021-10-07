@@ -1,6 +1,8 @@
 use std::io::Read;
 
 #[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Eq)]
 enum Tripplet {
     Symbolic,
     Real(Vec<u8>)
@@ -15,6 +17,55 @@ enum SymbolicU8 {
 enum Char64 {
     Sym,
     Real(u8)
+}
+
+#[test]
+fn test_eq_vecs() {
+    //let expe : Vec<u8> = vec![];
+    // assert_eq!(expe, vec![1]);
+    //assert_eq!(Tripplet::Real(vec![1,2,3]), Tripplet::Real(vec![1,2]));
+}
+
+
+#[test]
+fn test_retain_in_vec() {
+    let mut vec : Vec<u8> = vec![1,2,3,4];
+    vec.retain(|byte| {
+        byte.rem_euclid(2) == 0
+    });
+    assert_eq!(vec![2,4], vec);
+}
+
+
+#[test]
+fn test_readfile() {
+   let mut file = std::fs::File::open("/etc/passwd").unwrap(); 
+   let mut buffer = String::new();
+   file.read_to_string(&mut buffer).unwrap();
+   assert!(buffer.contains("ellcs"));
+}
+
+struct Person {
+    name: String,
+    age: u32
+}
+
+
+#[test]
+fn test_match() {
+    let person = Person {
+        name: String::from("Bob"),
+        age: 18
+    };
+    match person {
+        Person { name, age } if age >= 18 => {
+            assert!(true);
+        },
+        // default
+        _ => {
+            assert!(false);
+        }
+    }
 }
 
 #[test]
