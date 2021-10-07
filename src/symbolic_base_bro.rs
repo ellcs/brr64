@@ -64,6 +64,7 @@ pub fn generate_candidates(input: &str) -> Candidates {
     let mut out: Vec<OutChar64> = std::iter::repeat(OutChar64::Equals).take(4).collect();
     let outputs = vec![&mut input0, &mut input1, &mut input2].into_iter().map(|input| {
         let i = (3 - (input.len() % 3)) % 3;
+        //let i = input.len().rem_euclid(3);
         input.extend(std::iter::repeat(InChar64::Sym).take(i));
         input.
           chunks(3_usize).
@@ -110,7 +111,12 @@ fn base64_three_chars_symbolic(chars: &[InChar64], result: &mut Vec<OutChar64>) 
         [InChar64::Real(c1), InChar64::Real(c2), InChar64::Sym]      => fifth_case(c1, c2, result),
         [InChar64::Sym,      InChar64::Real(c2), InChar64::Sym]      => sixth_case(c2, result),
         [InChar64::Sym,      InChar64::Sym,      InChar64::Sym]      => seventh_case(result),
-        _ => panic!("Can not handle this case (length: {}): {:?}", chars.len(), chars)
+        _ if result.len() != 3 => {
+            panic!("Cannot handle which has not length of three chars: {:?}", chars);
+        },
+        _ => {
+            panic!("Can not handle this case (length: {}): {:?}", chars.len(), chars)
+        }
     }
 }
 
