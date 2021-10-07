@@ -51,6 +51,23 @@ pub enum OutChar64 {
 #[derive(Clone)]
 pub struct Candidates(pub Vec<OutChar64>, pub Vec<OutChar64>, pub Vec<OutChar64>);
 
+impl PartialEq<u8> for OutChar64 {
+    fn eq(&self, other: &u8) -> bool {
+        match self {
+            OutChar64::Single(byte) => {
+                other == byte
+            },
+            OutChar64::Multiple(bytes) => {
+                bytes.iter().any(|byte| {
+                    other == byte
+                })
+            },
+            OutChar64::Equals => {
+                *other == ('=' as u8)
+            }
+        }
+    }
+}
 
 pub fn generate_candidates(input: &str) -> Candidates {
     let mut input0: Vec<InChar64> = input.bytes().map(|b| { InChar64::Real(b as u32)}).collect();
@@ -314,3 +331,12 @@ fn base64_three_chars_symbolic_fifth_case() {
     assert_eq!(output, expected);
 }
 
+
+#[test]
+fn test_partial_eq_outchar64_and_u8() {
+    assert_eq!(OutChar64::Equals, '=' as u8);
+
+    assert_eq!(OutChar64::Single('Y' as u8), 'Y' as u8);
+
+    assert_eq!(OutChar64::Multiple(vec!['Y' as u8]), 'Y' as u8);
+}
