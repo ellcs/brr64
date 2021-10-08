@@ -3,7 +3,11 @@ use crate::symbolic_base_bro;
 use crate::symbolic_base_bro::*;
 
 use std::collections::VecDeque;
+use std::io::BufRead;
+use std::io::Read;
 use std::iter::FromIterator;
+
+use log::{debug, error, info, warn};
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -29,6 +33,43 @@ pub fn by_candidates<'search>(candidates: &'search symbolic_base_bro::Candidates
                  search_stack: Vec::new() }
 }
 
+pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candidates) {
+    const BUFFER_SIZE: usize = 1 << 8;
+
+    let candidates = symbolic_base_bro::generate_candidates("asdf");
+    let mut search = by_candidates(&candidates);
+    let mut buffer_vec = Vec::with_capacity(BUFFER_SIZE);
+    let mut operation = |bytes: &[u8]| {
+        debug!("Pushing {:?}", bytes);
+        if push_all(&mut search, bytes) {
+            let found = search.search_stack.iter().find(|s| {
+                s.current_candidate.is_empty()
+            });
+            println!("{:?}", found.unwrap());
+        }
+    };
+    loop {
+        match rdr.by_ref().take(BUFFER_SIZE as u64).read_to_end(&mut buffer_vec) {
+            Err(err) => {
+                error!("Error while reading file: {}", err);
+                std::process::exit(1);
+            },
+            Ok(chunk_size) => {
+                if chunk_size == 0 {
+                    break;
+                }
+                operation(&buffer_vec);
+                if chunk_size < BUFFER_SIZE {
+                    break;
+                }
+                buffer_vec.clear();
+            }
+        }
+
+    }
+}
+
+
 #[inline(always)]
 fn matches_outchar64(match_byte: &u8, outchar64: &OutChar64) -> bool {
     match outchar64 {
@@ -50,10 +91,12 @@ fn matches_outchar64(match_byte: &u8, outchar64: &OutChar64) -> bool {
 pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     input.iter().for_each(|byte| {
         // drop not matching searches
-        push_search.search_stack.retain(|prev_search| {
-            let outchar64 = prev_search.current_candidate.front().unwrap();
-            matches_outchar64(&byte, &outchar64)
-        });
+        if *byte != ('\n' as u8) {
+            push_search.search_stack.retain(|prev_search| {
+                let outchar64 = prev_search.current_candidate.front().unwrap();
+                matches_outchar64(&byte, &outchar64)
+            });
+        }
 
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
@@ -78,10 +121,11 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
 
         // move existing searches further
         push_search.search_stack.iter_mut().for_each(|prev_search| {
-            prev_search.current_candidate.pop_front().unwrap();
+            // we dont care about options result, because the empty vec will
+            // be fine enough
+            prev_search.current_candidate.pop_front();
         });
 
-        println!("{:?} - {:?}", byte, push_search);
         push_search.byte_count += 1;
     });
     // when a candidate of a search is empty, the search
@@ -109,7 +153,15 @@ fn test_push_search_simple_positive() {
     let mut search = by_candidates(&candidates);
     let input_bytes = b"YXNkZg==";
     let out = push_all(&mut search, input_bytes);
-    println!("{:?}", &search);
+    assert!(out);
+}
+
+#[test]
+fn test_push_search_simple_positive_containing_newline() {
+    let candidates = symbolic_base_bro::generate_candidates("asdf");
+    let mut search = by_candidates(&candidates);
+    let input_bytes = b"YXNkZg==\n";
+    let out = push_all(&mut search, input_bytes);
     assert!(out);
 }
 
@@ -119,7 +171,6 @@ fn test_push_search_simple_negative() {
     let mut search = by_candidates(&candidates);
     let input_bytes = b"YXXNkZg==";
     let out = push_all(&mut search, input_bytes);
-    println!("{:?}", &search);
     assert!(!out);
 }
 
@@ -132,7 +183,5 @@ fn test_search_push_all_multiple_times() {
     assert!(!push_all(&mut search, multi_input_bytes[1]));
     // after third w have a match
     assert!(push_all(&mut search, multi_input_bytes[2]));
-
-    println!("");
 }
 
