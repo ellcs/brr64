@@ -70,23 +70,6 @@ pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candi
 }
 
 
-#[inline(always)]
-fn matches_outchar64(match_byte: &u8, outchar64: &OutChar64) -> bool {
-    match outchar64 {
-        OutChar64::Single(byte) => {
-            match_byte == byte
-        },
-        OutChar64::Multiple(bytes) => {
-            bytes.iter().any(|byte| {
-                match_byte == byte
-            })
-        },
-        OutChar64::Equals => {
-            *match_byte == ('=' as u8)
-        }
-    }
-}
-
 /// returns true if push has found a position.
 pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     input.iter().for_each(|byte| {
@@ -94,25 +77,25 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
         if *byte != ('\n' as u8) {
             push_search.search_stack.retain(|prev_search| {
                 let outchar64 = prev_search.current_candidate.front().unwrap();
-                matches_outchar64(&byte, &outchar64)
+                byte == *outchar64
             });
         }
 
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
-        if matches_outchar64(byte, c1.first().unwrap()) {
+        if byte == c1.first().unwrap() {
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c1.iter())
             });
         } 
-        if matches_outchar64(byte, c2.first().unwrap()) {
+        if byte == c2.first().unwrap() {
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c2.iter())
             });
         } 
-        if matches_outchar64(byte, c3.first().unwrap()) {
+        if byte == c3.first().unwrap() {
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c3.iter())
@@ -135,17 +118,6 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     })
 }
 
-#[test]
-fn test_matches_outchar64() {
-    // single
-    assert!(matches_outchar64(&('Y' as u8), &OutChar64::Single('Y' as u8)));
-
-    // multiple
-    assert!(matches_outchar64(&('Y' as u8), &OutChar64::Multiple(vec!['Y' as u8])));
-
-    // single
-    assert!(matches_outchar64(&('=' as u8), &OutChar64::Equals));
-}
 
 #[test]
 fn test_push_search_simple_positive() {
