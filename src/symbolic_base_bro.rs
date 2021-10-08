@@ -69,6 +69,24 @@ impl PartialEq<u8> for OutChar64 {
     }
 }
 
+impl PartialEq<OutChar64> for u8 {
+    fn eq(&self, other: &OutChar64) -> bool {
+        match other {
+            OutChar64::Single(byte) => {
+                self == byte
+            },
+            OutChar64::Multiple(bytes) => {
+                bytes.iter().any(|byte| {
+                    self == byte
+                })
+            },
+            OutChar64::Equals => {
+                *self == ('=' as u8)
+            }
+        }
+    }
+}
+
 pub fn generate_candidates(input: &str) -> Candidates {
     let mut input0: Vec<InChar64> = input.bytes().map(|b| { InChar64::Real(b as u32)}).collect();
     let mut input1: Vec<InChar64> = input0.clone();
