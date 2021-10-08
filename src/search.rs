@@ -14,7 +14,7 @@ use log::{debug, error, info, warn};
 #[derive(Eq)]
 pub struct Search<'search> {
     pub location: u32,
-    //search_stack: Vec<u8>,
+    //context: Vec<u8>,
     pub current_candidate: VecDeque<&'search OutChar64>
 }
 
@@ -76,26 +76,58 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
         // drop not matching searches
         if *byte != ('\n' as u8) {
             push_search.search_stack.retain(|prev_search| {
-                let outchar64 = prev_search.current_candidate.front().unwrap();
-                byte == *outchar64
+                match prev_search.current_candidate.front() {
+                    Some(outchar64) => {
+                        // skip newlines 
+                        byte == *outchar64
+                    },
+                    None => {
+                        // keep empty searches because this means the search was successful.
+                        true
+                    }
+                }
             });
         }
 
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
 
-        add_candidate_if_matching(byte, c1, push_search);
-        add_candidate_if_matching(byte, c2, push_search);
-        add_candidate_if_matching(byte, c3, push_search);
+        if byte == c1.first().unwrap() {
+            push_search.search_stack.push(Search {
+                location: push_search.byte_count,
+                current_candidate: VecDeque::from_iter(c1.iter())
+            });
+        } 
+        if byte == c2.first().unwrap() {
+            push_search.search_stack.push(Search {
+                location: push_search.byte_count,
+                current_candidate: VecDeque::from_iter(c2.iter())
+            });
+        } 
+        if byte == c3.first().unwrap() {
+            push_search.search_stack.push(Search {
+                location: push_search.byte_count,
+                current_candidate: VecDeque::from_iter(c3.iter())
+            });
+        } 
 
         // move existing searches further
         push_search.search_stack.iter_mut().for_each(|prev_search| {
+            match prev_search.current_candidate.front() {
+                Some(outchar64) => {
+                    // skip newlines 
+                    if *byte != ('\n' as u8) {
+                        prev_search.current_candidate.pop_front();
+                    }
+                },
+                None => { }
+            }
             // we dont care about options result, because the empty vec will
             // be fine enough
-            prev_search.current_candidate.pop_front();
         });
 
         push_search.byte_count += 1;
+        println!("{} --- {:?}", byte, push_search);
     });
     // when a candidate of a search is empty, the search
     // has been completed
@@ -104,29 +136,46 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     })
 }
 
-fn add_candidate_if_matching<'search>(byte: &u8, candidate: &'search Vec<OutChar64>, push_search: &'search mut PushSearch<'search>) {
-    if byte == candidate.first().unwrap() {
-        push_search.search_stack.push(Search {
-            location: push_search.byte_count,
-            current_candidate: VecDeque::from_iter(candidate.iter())
-        });
-    } 
-}
-
 #[test]
 fn test_push_search_simple_positive() {
     let candidates = symbolic_base_bro::generate_candidates("asdf");
     let mut search = by_candidates(&candidates);
-    let input_bytes = b"YXNkZg==";
+    let input_bytes = b"   YXNkZg==   ";
     let out = push_all(&mut search, input_bytes);
     assert!(out);
 }
 
 #[test]
-fn test_push_search_simple_positive_containing_newline() {
+fn test_push_search_content_appears_twice() {
+    let candidates = symbolic_base_bro::generate_candidates("asdf");
+    let mut search = by_candidates(&candidates);
+    let input_bytes = b"   YXNkZg==  YXNkZg== ";
+    let out = push_all(&mut search, input_bytes);
+    assert!(out);
+
+    let found : Vec<&Search> = search.search_stack.iter().filter(|s| {
+        s.current_candidate.is_empty()
+    }).collect();
+    assert_eq!(found.len(), 2);
+}
+
+
+
+
+#[test]
+fn test_push_search_simple_positive_containing_newline_at_end() {
     let candidates = symbolic_base_bro::generate_candidates("asdf");
     let mut search = by_candidates(&candidates);
     let input_bytes = b"YXNkZg==\n";
+    let out = push_all(&mut search, input_bytes);
+    assert!(out);
+}
+
+#[test]
+fn test_push_search_simple_positive_containing_newline_inbetween() {
+    let candidates = symbolic_base_bro::generate_candidates("asdf");
+    let mut search = by_candidates(&candidates);
+    let input_bytes = b"YXNk\nZg==\n";
     let out = push_all(&mut search, input_bytes);
     assert!(out);
 }
