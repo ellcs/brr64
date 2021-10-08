@@ -83,24 +83,10 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
 
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
-        if byte == c1.first().unwrap() {
-            push_search.search_stack.push(Search {
-                location: push_search.byte_count,
-                current_candidate: VecDeque::from_iter(c1.iter())
-            });
-        } 
-        if byte == c2.first().unwrap() {
-            push_search.search_stack.push(Search {
-                location: push_search.byte_count,
-                current_candidate: VecDeque::from_iter(c2.iter())
-            });
-        } 
-        if byte == c3.first().unwrap() {
-            push_search.search_stack.push(Search {
-                location: push_search.byte_count,
-                current_candidate: VecDeque::from_iter(c3.iter())
-            });
-        }
+
+        add_candidate_if_matching(byte, c1, push_search);
+        add_candidate_if_matching(byte, c2, push_search);
+        add_candidate_if_matching(byte, c3, push_search);
 
         // move existing searches further
         push_search.search_stack.iter_mut().for_each(|prev_search| {
@@ -118,6 +104,14 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     })
 }
 
+fn add_candidate_if_matching<'search>(byte: &u8, candidate: &'search Vec<OutChar64>, push_search: &'search mut PushSearch<'search>) {
+    if byte == candidate.first().unwrap() {
+        push_search.search_stack.push(Search {
+            location: push_search.byte_count,
+            current_candidate: VecDeque::from_iter(candidate.iter())
+        });
+    } 
+}
 
 #[test]
 fn test_push_search_simple_positive() {
