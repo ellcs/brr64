@@ -35,11 +35,10 @@ pub struct Options {
 #[derive(StructOpt, Debug)]
 #[structopt()]
 pub struct ConvertOptions {
-    /// The base64 encoded string, you are looking for, might contain a newline. If you want to
-    /// avoid the newline search, set this value to true. It's recommended to keep it on true,
-    /// except for educational purposes.
+    /// A base64 encoded string can contain a newline at any position. `brr64` keeps these newlines
+    /// in mind. It's recommended to avoid this flag. Educational purposes might be an exception.
     #[structopt(short = "n", long)]
-    pub match_newlines: bool,
+    pub dont_match_newlines: bool,
 
     /// Usually, when base64 encoding a string which is not three characters long, you will find
     /// padding at the end of the string, which is indicated as equal signs at the end. Caution:

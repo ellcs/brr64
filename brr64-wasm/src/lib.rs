@@ -40,7 +40,7 @@ pub unsafe extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
     // rust-javascript ffi is too much work.
     let input = CStr::from_ptr(data).to_string_lossy().into_owned();
     let options = args::ConvertOptions { 
-        match_newlines: true, 
+        dont_match_newlines: false, 
         print_equals:  false,
     };
     let candidates = symbolic_base_bro::generate_candidates(&input);

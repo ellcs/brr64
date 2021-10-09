@@ -21,7 +21,7 @@ pub fn regex_string_by_candidate(candidate: &[OutChar64], options: &args::Conver
         match outchar {
             OutChar64::Single(byte) => {
                 out.push(*byte as char);
-                if options.match_newlines {
+                if !options.dont_match_newlines {
                     out.push_str("\\n?");
                 }
             },
@@ -34,7 +34,7 @@ pub fn regex_string_by_candidate(candidate: &[OutChar64], options: &args::Conver
                     }
                 });
                 out.push(')');
-                if options.match_newlines {
+                if !options.dont_match_newlines {
                     out.push_str("\\n?");
                 }
             },
@@ -52,7 +52,7 @@ pub fn regex_string_by_candidate(candidate: &[OutChar64], options: &args::Conver
 fn test_generate_candidates_regex_empty() {
     let search_term = String::from("");
     let options = args::ConvertOptions { 
-        match_newlines: false, 
+        dont_match_newlines: true, 
         print_equals: false,
     };
     let candidates = symbolic_base_bro::generate_candidates(&search_term);
@@ -65,7 +65,7 @@ fn test_generate_candidates_regex_empty() {
 fn test_generate_candidates_regex_empty_with_equals() {
     let search_term = String::from("");
     let options = args::ConvertOptions { 
-        match_newlines: false, 
+        dont_match_newlines: true, 
         print_equals: true ,
     };
     let candidates = symbolic_base_bro::generate_candidates(&search_term);
@@ -78,7 +78,7 @@ fn test_generate_candidates_regex_empty_with_equals() {
 fn test_generate_candidates_regex_simple_a() {
     let search_term = String::from("A");
     let options = args::ConvertOptions { 
-        match_newlines: false, 
+        dont_match_newlines: true, 
         print_equals: false ,
     };
     let candidates = symbolic_base_bro::generate_candidates(&search_term);
@@ -94,7 +94,7 @@ fn test_generate_candidates_regex_simple_a() {
 fn test_generate_candidates_regex_simple_a_with_newlines() {
     let search_term = String::from("A");
     let options = args::ConvertOptions { 
-        match_newlines: true, 
+        dont_match_newlines: false, 
         print_equals: false,
     };
     let candidates = symbolic_base_bro::generate_candidates(&search_term);
@@ -112,7 +112,7 @@ fn test_generate_candidates_regex_simple_a_with_newlines() {
 fn test_generate_candidates_regex_simple_a_with_equals() {
     let search_term = String::from("A");
     let options = args::ConvertOptions { 
-        match_newlines: false, 
+        dont_match_newlines: true, 
         print_equals: true, 
     };
     let candidates = symbolic_base_bro::generate_candidates(&search_term);
