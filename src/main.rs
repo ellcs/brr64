@@ -22,9 +22,9 @@ pub fn options() -> args::Options {
 fn main() {
     let options = options();
     let candidates = symbolic_base_bro::generate_candidates(&options.search_term);
-    let regex = convert::regex_string_by_candidates(&candidates, &options.convert_options);
     
     if options.print_regex {
+        let regex = convert::regex_string_by_candidates(&candidates, &options.convert_options);
         println!("{}", regex);
     } else {
         let path = options.input_file.clone();
