@@ -76,15 +76,10 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
         // drop not matching searches
         if *byte != ('\n' as u8) {
             push_search.search_stack.retain(|prev_search| {
-                match prev_search.current_candidate.front() {
-                    Some(outchar64) => {
-                        // skip newlines 
-                        byte == *outchar64
-                    },
-                    None => {
-                        // keep empty searches because this means the search was successful.
-                        true
-                    }
+                if let Some(outchar64) = prev_search.current_candidate.front() {
+                    byte == *outchar64
+                } else {
+                    true
                 }
             });
         }
@@ -113,17 +108,13 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
 
         // move existing searches further
         push_search.search_stack.iter_mut().for_each(|prev_search| {
-            match prev_search.current_candidate.front() {
-                Some(outchar64) => {
-                    // skip newlines 
-                    if *byte != ('\n' as u8) {
-                        prev_search.current_candidate.pop_front();
-                    }
-                },
-                None => { }
+            // skip newlines in base64
+            if *byte != ('\n' as u8) {
+                // pop_front returns an optional. we don't unwrap it, because
+                // a fail would mean that the Vec is empty and we dont care
+                // about empty Vecs.
+                prev_search.current_candidate.pop_front();
             }
-            // we dont care about options result, because the empty vec will
-            // be fine enough
         });
 
         push_search.byte_count += 1;
