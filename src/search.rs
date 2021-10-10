@@ -127,7 +127,6 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
         });
 
         push_search.byte_count += 1;
-        println!("{} --- {:?}", byte, push_search);
     });
     // when a candidate of a search is empty, the search
     // has been completed
