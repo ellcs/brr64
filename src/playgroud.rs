@@ -1,5 +1,47 @@
 use std::io::Read;
 
+
+fn gen_vec(i: u8) -> Vec<u8> {
+    (0..i).collect()
+}
+
+#[test]
+fn test_gen_vec() {
+    assert_eq!(0, gen_vec(0).len());
+    assert_eq!(1, gen_vec(1).len());
+    assert_eq!(2, gen_vec(2).len());
+    assert_eq!(99, gen_vec(99).len());
+}
+
+#[test]
+fn play_gen_vec_match() {
+    match (gen_vec(0)) {
+        (vec) if vec.len() > 0 => {
+            assert!(false);
+        },
+        _ => {
+            assert!(true);
+        }
+    }
+
+    match (gen_vec(1)) {
+        (vec) if vec.len() > 0 => {
+            assert!(true);
+        },
+        _ => {
+            assert!(true);
+        }
+    }
+
+    (0..10).into_iter().map(|i|{
+        i as u8
+    }).for_each(|i|{
+        let vec = gen_vec(1);
+        vec.iter().for_each(|m| {
+        });
+    });
+}
+
 #[derive(Debug)]
 #[derive(PartialEq)]
 #[derive(Eq)]
