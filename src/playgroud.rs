@@ -16,8 +16,8 @@ fn test_gen_vec() {
 
 #[test]
 fn play_gen_vec_match() {
-    match (gen_vec(0)) {
-        (vec) if vec.len() > 0 => {
+    match gen_vec(0) {
+        vec if vec.len() > 0 => {
             assert!(false);
         },
         _ => {
@@ -25,8 +25,8 @@ fn play_gen_vec_match() {
         }
     }
 
-    match (gen_vec(1)) {
-        (vec) if vec.len() > 0 => {
+    match gen_vec(1) {
+        vec if vec.len() > 0 => {
             assert!(true);
         },
         _ => {
@@ -37,8 +37,8 @@ fn play_gen_vec_match() {
     (0..10).into_iter().map(|i|{
         i as u8
     }).for_each(|i|{
-        let vec = gen_vec(1);
-        vec.iter().for_each(|m| {
+        let vec = gen_vec(i);
+        vec.iter().for_each(|_m| {
         });
     });
 }
@@ -105,7 +105,7 @@ fn test_match() {
         age: 18
     };
     match person {
-        Person { name, age } if age >= 18 => {
+        Person { name: _, age } if age >= 18 => {
             assert!(true);
         },
         // default

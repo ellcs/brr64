@@ -73,7 +73,7 @@ pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candi
 pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     input.iter().for_each(|byte| {
         // drop not matching searches
-        if *byte != ('\n' as u8) {
+        if *byte != b'\n' {
             push_search.search_stack.retain(|prev_search| {
                 if let Some(outchar64) = prev_search.current_candidate.front() {
                     byte == *outchar64
@@ -108,7 +108,7 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
         // move existing searches further
         push_search.search_stack.iter_mut().for_each(|prev_search| {
             // skip newlines in base64
-            if *byte != ('\n' as u8) {
+            if *byte != b'\n' {
                 // pop_front returns an optional. we don't unwrap it, because
                 // a fail would mean that the Vec is empty and we dont care
                 // about empty Vecs.
