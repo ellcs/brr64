@@ -1,6 +1,7 @@
+#[allow(unused_imports)]
 use std::io::Read;
 
-
+#[allow(dead_code)]
 fn gen_vec(i: u8) -> Vec<u8> {
     (0..i).collect()
 }
@@ -45,17 +46,20 @@ fn play_gen_vec_match() {
 #[derive(Debug)]
 #[derive(PartialEq)]
 #[derive(Eq)]
+#[allow(dead_code)]
 enum Tripplet {
     Symbolic,
     Real(Vec<u8>)
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 enum SymbolicU8 {
     Symbolic,
     Real(u8)
 }
 
+#[allow(dead_code)]
 enum Char64 {
     Sym,
     Real(u8)
@@ -87,6 +91,7 @@ fn test_readfile() {
    assert!(buffer.contains("ellcs"));
 }
 
+#[allow(dead_code)]
 struct Person {
     name: String,
     age: u32
@@ -192,6 +197,7 @@ fn test_extend() {
 
 }
 
+#[allow(dead_code)]
 fn fooadd(a: &u8, b: &u8) -> u8 {
    a + b 
 }
@@ -230,6 +236,7 @@ fn test_cycle() {
     assert!(called);
 }
 
+#[allow(dead_code)]
 fn every_three_chars<F: FnMut(&[u8])>(s: &str, steps: u8, mut f: F) {
     s.bytes().
         collect::<Vec<u8>>().
