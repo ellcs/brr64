@@ -3,11 +3,11 @@ use crate::symbolic_base_bro;
 use crate::symbolic_base_bro::*;
 
 use std::collections::VecDeque;
-use std::io::BufRead;
+//use std::io::BufRead;
 use std::io::Read;
 use std::iter::FromIterator;
 
-use log::{debug, error, info, warn};
+use log::{debug, error};
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -36,7 +36,6 @@ pub fn by_candidates<'search>(candidates: &'search symbolic_base_bro::Candidates
 pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candidates) {
     const BUFFER_SIZE: usize = 1 << 8;
 
-    let candidates = symbolic_base_bro::generate_candidates("asdf");
     let mut search = by_candidates(&candidates);
     let mut buffer_vec = Vec::with_capacity(BUFFER_SIZE);
     let mut operation = |bytes: &[u8]| {

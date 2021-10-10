@@ -1,13 +1,11 @@
 use brr64::args;
 use brr64::symbolic_base_bro;
 use brr64::convert;
-use brr64::playgroud;
+//use brr64::playgroud;
 use brr64::search;
 
-use std::io::BufRead;
-use std::io::Read;
-
-use log::{debug, error, info, warn};
+//use log::{debug, error, info, warn};
+use log::error;
 use structopt::StructOpt;
 use atty::Stream;
 
