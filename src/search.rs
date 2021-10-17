@@ -29,14 +29,14 @@ pub struct PushSearch<'search> {
 
 pub fn by_candidates<'search>(candidates: &'search symbolic_base_bro::Candidates) -> PushSearch {
     PushSearch { byte_count: 0_u32,
-                 candidates: candidates, 
+                 candidates, 
                  search_stack: Vec::new() }
 }
 
 pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candidates) {
     const BUFFER_SIZE: usize = 1 << 8;
 
-    let mut search = by_candidates(&candidates);
+    let mut search = by_candidates(candidates);
     let mut buffer_vec = Vec::with_capacity(BUFFER_SIZE);
     let mut operation = |bytes: &[u8]| {
         debug!("Pushing {:?}", bytes);
@@ -176,6 +176,16 @@ fn test_push_search_simple_negative() {
     let input_bytes = b"YXXNkZg==";
     let out = push_all(&mut search, input_bytes);
     assert!(!out);
+}
+
+
+#[test]
+fn test_search_long_base64() {
+    let candidates = symbolic_base_bro::generate_candidates("qwer");
+    let mut search = by_candidates(&candidates);
+    let input_bytes = b"ICAgICAgcXdlciA=";
+    let out = push_all(&mut search, input_bytes);
+    assert!(out);
 }
 
 #[test]

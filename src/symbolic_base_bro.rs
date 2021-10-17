@@ -63,7 +63,8 @@ impl PartialEq<u8> for OutChar64 {
                 })
             },
             OutChar64::Equals => {
-                *other == ('=' as u8)
+                true
+                //*other == b'='
             }
         }
     }
@@ -81,7 +82,8 @@ impl PartialEq<OutChar64> for u8 {
                 })
             },
             OutChar64::Equals => {
-                *self == ('=' as u8)
+                //*self == b'='
+                true
             }
         }
     }
