@@ -4,8 +4,8 @@ use brr64::convert;
 //use brr64::playgroud;
 use brr64::search;
 
-//use log::{debug, error, info, warn};
-use log::error;
+#[macro_use]
+extern crate log;
 use structopt::StructOpt;
 use atty::Stream;
 
@@ -18,19 +18,23 @@ pub fn options() -> args::Options {
 
 
 fn main() {
+    env_logger::init();
     let options = options();
     let candidates = symbolic_base_bro::generate_candidates(&options.search_term);
+    let regex = convert::regex_string_by_candidates(&candidates, &options.convert_options);
+    info!("Generated candidate is {:?}", regex);
     
     if options.print_regex {
-        let regex = convert::regex_string_by_candidates(&candidates, &options.convert_options);
         println!("{}", regex);
     } else {
-        let path = options.input_file.clone();
+        let path = options.input_file;
         if path.as_os_str() == "-" {
+            debug!("Reading from stdin...");
             search::find_in_stream(std::io::stdin(), &candidates);
         } else {
             match std::fs::File::open(&path) {
                 Ok(file) => {
+                    debug!("Reading from {}", path.display());
                     search::find_in_stream(file, &candidates);
                 },
                 Err(_err) => {
