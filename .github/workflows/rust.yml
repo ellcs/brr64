@@ -32,7 +32,7 @@ jobs:
         mv target/wasm32-unknown-unknown/release/wasm_brr64.wasm docs/
         sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" docs/index.html
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
+      uses: ellcs/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
