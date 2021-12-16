@@ -8,37 +8,33 @@
 </head>
 <body>
 
-<div class="w3-content w3-padding-large w3-margin-top w3-xlarge">
+<div class="w3-content w3-padding-large w3-margin-top">
   <p>
   <div class="w3-card-4">
-    <div class="w3-container w3-grey">
-      <h2>brr64</h2>
-    </div>
-    <p>
-    <div class="w3-container">
+    <div class="w3-container w3-small">
+    <h1>brr64</h1>
 	Search for base64 encoded content, without decoding at all. This allows you to search in a flat file manner. Without false-positives or true-negatives. Works with Unicode, newline, carriage return and basically everything. 
     </div>
 
     <form class="w3-container">
-      <p>
-      <h4>Content to search for:</h4></p>
+      <h5>Content to search for:</h5>
       <textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Provide the plaintext you want to search..."></textarea>
       <p>     
-      <h4>Generated Regex for grep:</h4></p>
-	
+      <h5>Generated Regex for grep:</h5>
       <textarea class="w3-input w3-border" style="font-family: monospace" type="text" id="output">Provide input...</textarea>
       <p>
-      <button id="copy">copy</button>	      
+      <button id="copy" class="w3-btn w3-border w3-border-black" style="width:100%;">copy</button>	  
+      <p>
 	 
-      <label class="w3-text"><small>Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. Base64 content might contain newlines between characters. This is why you might see the optional newline match (<code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"\n?"</code>) quite often.</small></label>
+      <label class="w3-text w3-small">Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. Base64 content might contain newlines between characters. This is why you might see the optional newline match (<code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"\n?"</code>) quite often.</label>
     </form>
   </div>
   <p>
-  <footer>
+  <footer class="w3-small">
   Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a>. Current commit: <a href="https://github.com/ellcs/brr64/commit/464f391">464f391</a>
   </footer>
-</div>	  
-	  
+</div>  
+  
 	  
 <script>
 function copy() {
