@@ -16,7 +16,7 @@
 	Search for base64 encoded content, without decoding at all. This allows you to search in a flat file manner. Without false-positives or true-negatives. Works with Unicode, newline, carriage return and basically everything. 
     </div>
 
-    <form class="w3-container">
+    <div class="w3-container">
       <h5>Content to search for:</h5>
       <textarea class="w3-input w3-border" style="font-family: monospace;" type="text" name="input" id="input" placeholder="Provide the plaintext you want to search..."></textarea>
       <p>     
@@ -27,11 +27,11 @@
       <p>
 	 
       <label class="w3-text w3-small">Please note that the provided grep command, prints the byte-offset not the line number. The generated regular expression consists of three candidates. When given input is empty, only one candidate exists: the empty candidate. brr64 will print three same candidates for the empty case(s): <code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"(||)"</code>. Base64 content might contain newlines between characters. This is why you might see the optional newline match (<code class="w3-border" style="background: #ccc; padding: .1em; border: 1px;">"\n?"</code>) quite often.</label>
-    </form>
+    </div>
   </div>
   <p>
   <footer class="w3-small">
-  Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a>. Current commit: <a href="https://github.com/ellcs/brr64/commit/17e1083">17e1083</a>
+  Created by ellcs. Browse the code on <a href="https://github.com/ellcs/brr64">https://github.com/ellcs/brr64</a>. Current commit: <a href="https://github.com/ellcs/brr64/commit/819392a">819392a</a>
   </footer>
 </div>  
   
