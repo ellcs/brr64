@@ -33,6 +33,7 @@ pub struct Options {
 
 
 #[derive(StructOpt, Debug)]
+#[derive(Clone)]
 #[structopt()]
 pub struct ConvertOptions {
     /// A base64 encoded string can contain a newline at any position. `brr64` keeps these newlines

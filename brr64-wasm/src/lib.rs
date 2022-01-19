@@ -11,46 +11,45 @@ use brr64::symbolic_base_bro;
 use brr64::convert;
 use brr64::args;
 
-use std::mem;
-use std::ffi::{CString, CStr};
-use std::os::raw::{c_char, c_void};
+use wasm_bindgen::prelude::*;
 
+#[derive(Clone)]
+#[wasm_bindgen(js_name = ConvertOptions)]
+pub struct ConvertOptionsWrapper(args::ConvertOptions);
 
-// In order to work with the memory we expose (de)allocation methods
-#[no_mangle]
-pub extern "C" fn alloc(size: usize) -> *mut c_void {
-    let mut buf = Vec::with_capacity(size);
-    let ptr = buf.as_mut_ptr();
-    mem::forget(buf);
-    return ptr as *mut c_void;
+#[wasm_bindgen(js_class = ConvertOptions)]
+impl ConvertOptionsWrapper {
+
+	#[wasm_bindgen(constructor)]
+	pub fn new() -> ConvertOptionsWrapper {
+		ConvertOptionsWrapper(args::ConvertOptions { dont_match_newlines: false, print_equals: false })
+	}
+
+    #[wasm_bindgen(setter)]
+    pub fn set_dont_match_newlines(&mut self, value: bool) {
+        self.0.dont_match_newlines = value;
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_print_equals(&mut self, value: bool) {
+        self.0.print_equals = value;
+    }
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn dealloc(ptr: *mut c_void, cap: usize) {
-    let _buf = Vec::from_raw_parts(ptr, 0, cap);
-}
 
-// The JavaScript side passes a pointer to a C-like string that's already placed into memory.
-// On the Rust side we turn this into a CStr, extract the bytes, pass it through the crate
-// and then turn it back into an memory-allocated C-like string.
-// A pointer to this data is returned.
-#[no_mangle]
-pub unsafe extern "C" fn candidates(data: *mut c_char) -> *mut c_char {
-    // print everything and remove them in javascript, because handling those options via.
-    // rust-javascript ffi is too much work.
-    let input = CStr::from_ptr(data).to_string_lossy().into_owned();
-    let options = args::ConvertOptions { 
-        dont_match_newlines: false, 
-        print_equals:  false,
-    };
+#[wasm_bindgen]
+pub fn candidates(input: String, options: &ConvertOptionsWrapper) -> String {
     let candidates = symbolic_base_bro::generate_candidates(&input);
-    let out = convert::regex_string_by_candidates(&candidates, &options);
-    let s = CString::new(out).unwrap();
-    s.into_raw()
+    convert::regex_string_by_candidates(&candidates, &options.clone().0)
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn dealloc_str(ptr: *mut c_char) {
-    let _ = CString::from_raw(ptr);
+#[wasm_bindgen]
+extern "C" {
+        fn alert(s: &str);
 }
 
+
+#[wasm_bindgen]
+pub fn run_alert(item: &str) {
+        alert(&format!("This is WASM and {}", item));
+}
