@@ -18,21 +18,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install rust dependencies
-      run: rustup override set nightly && rustup target add wasm32-unknown-unknown && cargo install wasm-gc
-    - name: Build
-      run: cargo build --verbose
+      run: rustup override set nightly && rustup target add wasm32-unknown-unknown && cargo install wasm-pack
     - name: Run tests
       run: cargo test --verbose
     - name: Build wasm file for `docs`
-      run: cargo build -p brr64-wasm --target wasm32-unknown-unknown --release
-    - name: Reduce size of generated wasm
-      run: wasm-gc target/wasm32-unknown-unknown/release/wasm_brr64.wasm
+      run: cd brr64-wasm; wasm-pack build --target web; cd ..
     - name: Move compiled wasm32 file into `docs`
       run: |
-        mv target/wasm32-unknown-unknown/release/wasm_brr64.wasm docs/
-        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" docs/index.html
+        mkdir public
+        mv brr64-wasm/pkg public/
+        cp brr64-wasm/index.html public/
+        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" public/index.html
     - name: Deploy
       uses: ellcs/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+        publish_dir: ./public
