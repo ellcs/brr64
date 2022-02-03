@@ -30,8 +30,7 @@ jobs:
         cp brr64-wasm/index.html public/
         sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" public/index.html
     - name: Deploying files
-      run: |
-        ls -l brr64-wasm/pkg/
+      run: 
         ls -l public/**/*
     - name: Deploy
       uses: ellcs/actions-gh-pages@v3
