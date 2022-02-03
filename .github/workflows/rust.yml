@@ -26,11 +26,10 @@ jobs:
     - name: Move compiled wasm32 file into `docs`
       run: |
         mkdir public
-        mv brr64-wasm/pkg/* public/
+        mv brr64-wasm/pkg public/
         cp brr64-wasm/index.html public/
         sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" public/index.html
-    - name: Deploying files
-      run: find public -type f
+        git add public
     - name: Deploy
       uses: ellcs/actions-gh-pages@v3
       with:
