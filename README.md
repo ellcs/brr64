@@ -12,7 +12,7 @@ There are two usages:
 
 ### Install and build
 
-You already set up your `rustup` and build `brr64` the following way:
+You already set up `rustup`. Than build `brr64` the following way:
 
 ```console
 user@host:brr64$ rustup override set nightly
