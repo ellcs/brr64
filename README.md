@@ -1,6 +1,6 @@
 # brr64
 
-Find base64 encoded content without decoding at all. 
+Find base64 encoded content without decoding at all. It figures out all three possible candidates.
 
 ### Usage
 
