@@ -14,9 +14,13 @@ There are two usages:
 
 You already set up your `rustup` and build `brr64` the following way:
 
-    rustup override set nightly
-    cargo build --release
+```console
+user@host:brr64$ rustup override set nightly
+user@host:brr64$ cargo build --release
+```
 
 After that you can run the release version:
 
-    ./target/release/brr64 "CTF{" /dev/urandom
+```console
+user@host:brr64$ ./target/release/brr64 "CTF{" /dev/urandom
+```
