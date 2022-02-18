@@ -27,20 +27,20 @@ fn main() {
         println!("{}", regex);
     } else {
         let path = options.input_file;
-        if path.as_os_str() == "-" {
-            debug!("Reading from stdin...");
-            search::find_in_stream(std::io::stdin(), &candidates);
-        } else {
-            match std::fs::File::open(&path) {
+        if let Some(search_path) = path {
+            match std::fs::File::open(&search_path) {
                 Ok(file) => {
-                    debug!("Reading from {}", path.display());
+                    debug!("Reading from {}", search_path.display());
                     search::find_in_stream(file, &candidates);
                 },
                 Err(_err) => {
-                    error!("Could not open file: {}", path.display());
+                    error!("Could not open file: {}", search_path.display());
                     std::process::exit(1);
                 }
             }
+        } else {
+            debug!("Reading from stdin...");
+            search::find_in_stream(std::io::stdin(), &candidates);
         }
     }
 }

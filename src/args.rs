@@ -9,11 +9,6 @@ pub struct Options {
     #[structopt(flatten)]
     pub convert_options: ConvertOptions,
 
-    /// Specifies which stream is used to search for the encoded search term.
-    //#[structopt(short = "f", long, default_value = "-")]
-    #[structopt(short = "i", long, parse(from_os_str), default_value = "-")]
-    pub input_file: PathBuf,
-
     /// Prints a regular expression which can be used for grep. 
     #[structopt(short = "p", long)]
     pub print_regex: bool,
@@ -29,6 +24,12 @@ pub struct Options {
     /// Provided input text to brr64.
     #[structopt()]
     pub search_term: String,
+
+    /// Specifies which stream is used to search for the encoded search term.
+    //#[structopt(short = "f", long, default_value = "-")]
+    #[structopt(parse(from_os_str))]
+    pub input_file: Option<PathBuf>,
+
 }
 
 
