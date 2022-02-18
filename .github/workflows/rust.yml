@@ -25,14 +25,10 @@ jobs:
       run: cd brr64-wasm; wasm-pack build --target web; cd ..
     - name: Move compiled wasm32 file into `docs`
       run: |
-        mkdir public
-        mv brr64-wasm/pkg public/
-        cp brr64-wasm/index.html public/
-        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" public/index.html
-        git add public
+        mv brr64-wasm/pkg/* brr64-wasm/public/
+        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" brr64-wasm/public/index.html
     - name: Deploy
       uses: ellcs/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
-        keep_files: true
+        publish_dir: ./brr64-wasm/public
