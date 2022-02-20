@@ -15,7 +15,7 @@ use log::{debug, error};
 pub struct Search<'search> {
     pub location: u32,
     //context: Vec<u8>,
-    pub current_candidate: VecDeque<&'search OutChar64>
+    pub current_candidate: VecDeque<&'search symbolic_base_bro::OutChar64>
 }
 
 #[derive(Debug)]
@@ -36,7 +36,14 @@ pub fn by_candidates<'search>(candidates: &'search symbolic_base_bro::Candidates
 pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candidates) {
     const BUFFER_SIZE: usize = 1 << 8;
 
-    let mut search = by_candidates(candidates);
+    let symbolic_base_bro::Candidates(f, s, t) = candidates;
+    let filtered_f = f.iter().filter(|c| **c != symbolic_base_bro::OutChar64::Equals).cloned().collect();
+    let filtered_s = s.iter().filter(|c| **c != symbolic_base_bro::OutChar64::Equals).cloned().collect();
+    let filtered_t = t.iter().filter(|c| **c != symbolic_base_bro::OutChar64::Equals).cloned().collect();
+    let filterd_candidates = symbolic_base_bro::Candidates(filtered_f, filtered_s, filtered_t); 
+
+
+    let mut search = by_candidates(&filterd_candidates);
     let mut buffer_vec = Vec::with_capacity(BUFFER_SIZE);
     let mut operation = |bytes: &[u8]| {
         debug!("Pushing {:?}", bytes);
@@ -72,6 +79,7 @@ pub fn find_in_stream<R: Read>(mut rdr: R, candidates: &symbolic_base_bro::Candi
 /// returns true if push has found a position.
 pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     input.iter().for_each(|byte| {
+        debug!("new byte read (byte, search_stack size): {:?} \t{:?}", byte, push_search.search_stack.len());
         // drop not matching searches
         if *byte != b'\n' {
             push_search.search_stack.retain(|prev_search| {
@@ -83,22 +91,31 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
             });
         }
 
+        let obj_to_log = push_search.search_stack.iter().filter_map(|s| {
+            s.current_candidate.front()
+        }).collect::<Vec<&&symbolic_base_bro::OutChar64>>();
+        //debug!("first bytes: {:?}", obj_to_log);
+
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
 
+        debug!("push_search.byte_count {}", push_search.byte_count);
         if byte == c1.first().unwrap() {
+            debug!("new candidate: {:?}", c1);
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c1.iter())
             });
         } 
         if byte == c2.first().unwrap() {
+            debug!("new candidate: {:?}", c2);
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c2.iter())
             });
         } 
         if byte == c3.first().unwrap() {
+            debug!("new candidate: {:?}", c3);
             push_search.search_stack.push(Search {
                 location: push_search.byte_count,
                 current_candidate: VecDeque::from_iter(c3.iter())
