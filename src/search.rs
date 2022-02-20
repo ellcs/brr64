@@ -125,6 +125,44 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
     })
 }
 
+impl PartialEq<u8> for symbolic_base_bro::OutChar64 {
+    fn eq(&self, other: &u8) -> bool {
+        match self {
+            symbolic_base_bro::OutChar64::Single(byte) => {
+                other == byte
+            },
+            symbolic_base_bro::OutChar64::Multiple(bytes) => {
+                bytes.iter().any(|byte| {
+                    other == byte
+                })
+            },
+            symbolic_base_bro::OutChar64::Equals => {
+                true
+                //*other == b'='
+            }
+        }
+    }
+}
+
+impl PartialEq<symbolic_base_bro::OutChar64> for u8 {
+    fn eq(&self, other: &symbolic_base_bro::OutChar64) -> bool {
+        match other {
+            symbolic_base_bro::OutChar64::Single(byte) => {
+                self == byte
+            },
+            symbolic_base_bro::OutChar64::Multiple(bytes) => {
+                bytes.iter().any(|byte| {
+                    self == byte
+                })
+            },
+            symbolic_base_bro::OutChar64::Equals => {
+                //*self == b'='
+                true
+            }
+        }
+    }
+}
+
 #[test]
 fn test_push_search_simple_positive() {
     let candidates = symbolic_base_bro::generate_candidates("asdf");
