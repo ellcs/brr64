@@ -13,7 +13,7 @@ use log::{debug, error};
 #[derive(PartialEq)]
 #[derive(Eq)]
 pub struct Search<'search> {
-    pub location: u32,
+    pub location: u64,
     //context: Vec<u8>,
     pub current_candidate: VecDeque<&'search symbolic_base_bro::OutChar64>
 }
@@ -22,13 +22,13 @@ pub struct Search<'search> {
 #[derive(PartialEq)]
 #[derive(Eq)]
 pub struct PushSearch<'search> {
-    byte_count: u32,
+    byte_count: u64,
     pub search_stack: Vec<Search<'search>>,
     candidates: &'search symbolic_base_bro::Candidates
 }
 
 pub fn by_candidates<'search>(candidates: &'search symbolic_base_bro::Candidates) -> PushSearch {
-    PushSearch { byte_count: 0_u32,
+    PushSearch { byte_count: 0_u64,
                  candidates, 
                  search_stack: Vec::new() }
 }
@@ -91,10 +91,6 @@ pub fn push_all(push_search: &mut PushSearch, input: &[u8]) -> bool {
             });
         }
 
-        let obj_to_log = push_search.search_stack.iter().filter_map(|s| {
-            s.current_candidate.front()
-        }).collect::<Vec<&&symbolic_base_bro::OutChar64>>();
-        //debug!("first bytes: {:?}", obj_to_log);
 
         // add new search
         let symbolic_base_bro::Candidates(c1, c2, c3) = push_search.candidates;
