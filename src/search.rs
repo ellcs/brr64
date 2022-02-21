@@ -200,6 +200,31 @@ fn test_push_search_content_appears_twice() {
 }
 
 
+//#[test]
+//fn test_offset_is_correct() {
+//    // "hello world"
+//    // (aGVsbG8gd29ybG(Q|R|S|T)
+//    // |(G|W|m|2)hlbGxvIHdvcmxk
+//    // |(B|F|J|N|R|V|Z|d|h|l|p|t|x|1|5|9)oZWxsbyB3b3JsZ(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P))
+//    let inputs : Vec<(&[u8], u64)> = vec![//(b"aGVsbG8gd29ybGQK", 0),
+//                                   // " hello world"
+//                                   (b"IGhlbGxvIHdvcmxkCg==", 1),
+//                                   // "  hello world"
+//                                   (b"ICBoZWxsbyB3b3JsZAo=", 2),
+//                                   // "   hello world"
+//                                   (b"ICAgaGVsbG8gd29ybGQK", 4)];
+//    let candidates = symbolic_base_bro::generate_candidates("hello world");
+//    inputs.iter().for_each(|(input_bytes, i)| {
+//        println!("{:?}", input_bytes);
+//        let mut search = by_candidates(&candidates);
+//        let out = push_all(&mut search, input_bytes);
+//        assert!(out);
+//        let found = search.search_stack.iter().find(|s| {
+//            s.current_candidate.is_empty()
+//        });
+//        assert_eq!(found.unwrap().location, *i, "input_bytes: {:?}", input_bytes);
+//    });
+//}
 
 
 #[test]
