@@ -1,12 +1,3 @@
-/*
- * This file is published under the CC0 licence.
- *
- *      https://creativecommons.org/publicdomain/zero/1.0/deed.en
- *
- * Most of the code in this file has been copied from:
- *
- *      https://www.hellorust.com/demos/sha1/index.html
- */
 use brr64::symbolic_base_bro;
 use brr64::convert;
 use brr64::args;
