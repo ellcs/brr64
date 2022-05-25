@@ -10,7 +10,7 @@ license = "MIT and CC0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = ["brr64-wasm"]
+members = ["brr64_wasm"]
 
 [dependencies]
 regex = "1"

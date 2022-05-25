@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
-brr64 = { path = ".." }
+brr64 = { path = "..", version = "0.1.0" }
 wasm-bindgen = "0.2.78"
 
 

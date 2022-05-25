@@ -22,13 +22,13 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Build wasm file for `docs`
-      run: cd brr64-wasm; wasm-pack build --target web; cd ..
+      run: cd brr64_wasm; wasm-pack build --target web; cd ..
     - name: Move compiled wasm32 file into `docs`
       run: |
-        mv brr64-wasm/pkg/* brr64-wasm/public/
-        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" brr64-wasm/public/index.html
+        mv brr64_wasm/pkg/* brr64_wasm/public/
+        sed -i "s/CURRENT_COMMIT_HASH/$(git rev-parse --short HEAD)/g" brr64_wasm/public/index.html
     - name: Deploy
       uses: ellcs/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./brr64-wasm/public
+        publish_dir: ./brr64_wasm/public
