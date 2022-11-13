@@ -4,10 +4,10 @@ Find base64 encoded content without decoding at all. It figures out all three po
 
 ### Usage
 
-There are two usages:
+You can use it in two ways:
 
   - A [brr64 web-version](https://ellcs.github.io/brr64/) allows you to
-    generate regular expressions and search with common tools like `grep`.
+    generate regular expressions and search with common tool `grep`.
   - A command line interface (CLI) named `brr64`.
 
 ### Install and build
